@@ -1,0 +1,114 @@
+version: '2'
+
+networks:
+  lic:
+
+volumes:
+  Applee.ca.com:
+  Applee.couchdb.0.com:
+  Applee.couchdb.1.com:
+  peer0.Applee.com:
+  peer1.Applee.com:
+
+services:
+  Applee.ca.com:
+    container_name: Applee.ca.com 
+    extends:
+      file: org-abstract.yaml
+      service: ca-abstract
+    environment:
+      - FABRIC_CA_SERVER_CA_NAME=Apple-ca-server
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.Applee.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/cdd579128476739cc02a5dec3381c39d78d6c5448d4b5abda60d0f5857f5bd52_sk
+    ports:
+      - "7054:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.Applee.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/cdd579128476739cc02a5dec3381c39d78d6c5448d4b5abda60d0f5857f5bd52_sk -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/Applee.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    networks:
+      - lic
+  
+  Applee.couchdb.0.com:
+    container_name: Applee.couchdb.0.com
+    extends:
+      file: org-abstract.yaml
+      service: couch-abstract
+    ports:
+      - "5984:5984"
+    networks:
+      - lic
+  
+  Applee.couchdb.1.com:
+    container_name: Applee.couchdb.1.com
+    extends:
+      file: org-abstract.yaml
+      service: couch-abstract
+    ports:
+      - "6984:5984"
+    networks:
+      - lic
+
+  peer0.Applee.com:
+    container_name: peer0.Applee.com
+    extends:
+      file: org-abstract.yaml
+      service: peer-abstract
+    environment:
+      - CORE_PEER_ID=peer0.Applee.com
+      - CORE_PEER_ADDRESS=peer0.Applee.com:7051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:7051
+      - CORE_PEER_CHAINCODEADDRESS=peer0.Applee.com:7052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:7052
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.Applee.com:8051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.Applee.com:7051
+      - CORE_PEER_LOCALMSPID=AppleeMSP
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=Applee.couchdb.0.com:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./crypto-config/peerOrganizations/Applee.com/peers/peer0.Applee.com/msp:/etc/hyperledger/fabric/msp
+        - ./crypto-config/peerOrganizations/Applee.com/peers/peer0.Applee.com/tls:/etc/hyperledger/fabric/tls
+        - peer0.Applee.com:/var/hyperledger/production
+    ports:
+      - 7051:7051
+    depends_on: 
+      - Applee.couchdb.0.com
+    networks:
+      - lic
+
+  peer1.Applee.com:
+    container_name: peer1.Applee.com
+    extends:
+      file: org-abstract.yaml
+      service: peer-abstract
+    environment:
+      - CORE_PEER_ID=peer1.Applee.com
+      - CORE_PEER_ADDRESS=peer1.Applee.com:8051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:8051
+      - CORE_PEER_CHAINCODEADDRESS=peer1.Applee.com:8052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:8052
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.Applee.com:8051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.Applee.com:7051
+      - CORE_PEER_LOCALMSPID=AppleeMSP
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=Applee.couchdb.1.com:6984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./crypto-config/peerOrganizations/Applee.com/peers/peer1.Applee.com/msp:/etc/hyperledger/fabric/msp
+        - ./crypto-config/peerOrganizations/Applee.com/peers/peer1.Applee.com/tls:/etc/hyperledger/fabric/tls
+        - peer1.Applee.com:/var/hyperledger/production
+    ports:
+      - 8051:8051
+    networks:
+      - lic
+    depends_on: 
+      - Applee.couchdb.1.com
+
+
+    
+
+

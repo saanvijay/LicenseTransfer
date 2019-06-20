@@ -1,0 +1,114 @@
+version: '2'
+
+networks:
+  lic:
+
+volumes:
+  ibmm.ca.com:
+  ibmm.couchdb.0.com:
+  ibmm.couchdb.1.com:
+  peer0.ibmm.com:
+  peer1.ibmm.com:
+
+services:
+  ibmm.ca.com:
+    container_name: ibmm.ca.com 
+    extends:
+      file: org-abstract.yaml
+      service: ca-abstract
+    environment:
+      - FABRIC_CA_SERVER_CA_NAME=Apple-ca-server
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.ibmm.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/cd706ff2821f3af4e3a6af0eb945b85df4e24ad93bb3173842f0edf1bc42951e_sk
+    ports:
+      - "7354:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.ibmm.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/cd706ff2821f3af4e3a6af0eb945b85df4e24ad93bb3173842f0edf1bc42951e_sk -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/ibmm.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    networks:
+      - lic
+  
+  ibmm.couchdb.0.com:
+    container_name: ibmm.couchdb.0.com
+    extends:
+      file: org-abstract.yaml
+      service: couch-abstract
+    ports:
+      - "5384:5984"
+    networks:
+      - lic
+  
+  ibmm.couchdb.1.com:
+    container_name: ibmm.couchdb.1.com
+    extends:
+      file: org-abstract.yaml
+      service: couch-abstract
+    ports:
+      - "6384:5984"
+    networks:
+      - lic
+
+  peer0.ibmm.com:
+    container_name: peer0.ibmm.com
+    extends:
+      file: org-abstract.yaml
+      service: peer-abstract
+    environment:
+      - CORE_PEER_ID=peer0.ibmm.com
+      - CORE_PEER_ADDRESS=peer0.ibmm.com:7351
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:7351
+      - CORE_PEER_CHAINCODEADDRESS=peer0.ibmm.com:7352
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:7352
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.ibmm.com:8351
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.ibmm.com:7351
+      - CORE_PEER_LOCALMSPID=ibmmMSP
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=ibmm.couchdb.0.com:5384
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./crypto-config/peerOrganizations/ibmm.com/peers/peer0.ibmm.com/msp:/etc/hyperledger/fabric/msp
+        - ./crypto-config/peerOrganizations/ibmm.com/peers/peer0.ibmm.com/tls:/etc/hyperledger/fabric/tls
+        - peer0.ibmm.com:/var/hyperledger/production
+    ports:
+      - 7351:7051
+    depends_on: 
+      - ibmm.couchdb.0.com
+    networks:
+      - lic
+
+  peer1.ibmm.com:
+    container_name: peer1.ibmm.com
+    extends:
+      file: org-abstract.yaml
+      service: peer-abstract
+    environment:
+      - CORE_PEER_ID=peer1.ibmm.com
+      - CORE_PEER_ADDRESS=peer1.ibmm.com:8351
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:8351
+      - CORE_PEER_CHAINCODEADDRESS=peer1.ibmm.com:8352
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:8352
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.ibmm.com:8351
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.ibmm.com:7351
+      - CORE_PEER_LOCALMSPID=ibmmMSP
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=ibmm.couchdb.1.com:6384
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./crypto-config/peerOrganizations/ibmm.com/peers/peer1.ibmm.com/msp:/etc/hyperledger/fabric/msp
+        - ./crypto-config/peerOrganizations/ibmm.com/peers/peer1.ibmm.com/tls:/etc/hyperledger/fabric/tls
+        - peer1.ibmm.com:/var/hyperledger/production
+    ports:
+      - 8351:8051
+    networks:
+      - lic
+    depends_on: 
+      - ibmm.couchdb.1.com
+
+
+    
+
+

@@ -1,0 +1,111 @@
+version: '2'
+
+networks:
+  lic:
+
+volumes:
+  oraclee.ca.com:
+  oraclee.couchdb.0.com:
+  oraclee.couchdb.1.com:
+  peer0.oraclee.com:
+  peer1.oraclee.com:
+
+services:
+  oraclee.ca.com:
+    container_name: oraclee.ca.com 
+    extends:
+      file: org-abstract.yaml
+      service: ca-abstract
+    environment:
+      - FABRIC_CA_SERVER_CA_NAME=Apple-ca-server
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.oraclee.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/d9e2ef55b8e9e68c786b10ad1ab9b35ad54bbedf7fd831d64097daae85aed1fa_sk
+    ports:
+      - "7154:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.oraclee.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/d9e2ef55b8e9e68c786b10ad1ab9b35ad54bbedf7fd831d64097daae85aed1fa_sk -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/oraclee.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    networks:
+      - lic
+  
+  oraclee.couchdb.0.com:
+    container_name: oraclee.couchdb.0.com
+    extends:
+      file: org-abstract.yaml
+      service: couch-abstract
+    ports:
+      - "5184:5984"
+    networks:
+      - lic
+  
+  oraclee.couchdb.1.com:
+    container_name: oraclee.couchdb.1.com
+    extends:
+      file: org-abstract.yaml
+      service: couch-abstract
+    ports:
+      - "6184:5984"
+    networks:
+      - lic
+
+  peer0.oraclee.com:
+    container_name: peer0.oraclee.com
+    extends:
+      file: org-abstract.yaml
+      service: peer-abstract
+    environment:
+      - CORE_PEER_ID=peer0.oraclee.com
+      - CORE_PEER_ADDRESS=peer0.oraclee.com:7151
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:7151
+      - CORE_PEER_CHAINCODEADDRESS=peer0.oraclee.com:7152
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:7152
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.oraclee.com:8151
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.oraclee.com:7151
+      - CORE_PEER_LOCALMSPID=oracleeMSP
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=oraclee.couchdb.0.com:5184
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./crypto-config/peerOrganizations/oraclee.com/peers/peer0.oraclee.com/msp:/etc/hyperledger/fabric/msp
+        - ./crypto-config/peerOrganizations/oraclee.com/peers/peer0.oraclee.com/tls:/etc/hyperledger/fabric/tls
+        - peer0.oraclee.com:/var/hyperledger/production
+    ports:
+      - 7151:7051
+    depends_on: 
+      - oraclee.couchdb.0.com
+    networks:
+      - lic
+
+  peer1.oraclee.com:
+    container_name: peer1.oraclee.com
+    extends:
+      file: org-abstract.yaml
+      service: peer-abstract
+    environment:
+      - CORE_PEER_ID=peer1.oraclee.com
+      - CORE_PEER_ADDRESS=peer1.oraclee.com:8151
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:8151
+      - CORE_PEER_CHAINCODEADDRESS=peer1.oraclee.com:8152
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:8152
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.oraclee.com:8151
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.oraclee.com:7151
+      - CORE_PEER_LOCALMSPID=oracleeMSP
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=oraclee.couchdb.1.com:6184
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./crypto-config/peerOrganizations/oraclee.com/peers/peer1.oraclee.com/msp:/etc/hyperledger/fabric/msp
+        - ./crypto-config/peerOrganizations/oraclee.com/peers/peer1.oraclee.com/tls:/etc/hyperledger/fabric/tls
+        - peer1.oraclee.com:/var/hyperledger/production
+    ports:
+      - 8151:8051
+    networks:
+      - lic
+    depends_on: 
+      - oraclee.couchdb.1.com
+
+
