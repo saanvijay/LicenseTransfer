@@ -2,9 +2,13 @@
 version: '2'
 
 volumes:
-orderer.lictransfer.com:
-cli:
+  orderer.lictransfer.com:
+  cli:
 
+networks:
+  lic:
+
+services:
   orderer.lictransfer.com:
     container_name: orderer.lictransfer.com
     extends:
@@ -45,18 +49,18 @@ cli:
         - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
         - ./channel-artifacts:/opt/gopath/src/github.com/hyperledger/fabric/peer/channel-artifacts
 
-    depends_on:
-      - orderer.lictransfer.com
-      - peer0.Applee.com
-      - peer1.Applee.com
-      - peer0.ibmm.com
-      - peer1.ibmm.com
-      - peer0.microsoftt.com
-      - peer1.microsoftt.com
-      - peer0.oraclee.com
-      - peer1.oraclee.com
-      - peer0.googlee.com
-      - peer1.google.com
+  #  depends_on:
+  #    - orderer.lictransfer.com
+  #    - peer0.Applee.com
+  #    - peer1.Applee.com
+  #    - peer0.ibmm.com
+  #    - peer1.ibmm.com
+  #    - peer0.microsoftt.com
+  #    - peer1.microsoftt.com
+  #    - peer0.oraclee.com
+  #    - peer1.oraclee.com
+  #    - peer0.googlee.com
+  #    - peer1.google.com
       
     networks:
       - lic
