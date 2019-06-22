@@ -205,7 +205,7 @@ Profiles:
             Capabilities:
                 <<: *OrdererCapabilities
         Consortiums:
-            SampleConsortium:
+            LicenseConsortium:
                 Organizations:
                     - *Org1
                     - *Org2
