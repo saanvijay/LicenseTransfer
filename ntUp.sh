@@ -31,6 +31,4 @@ docker-compose -f Applee.yaml -f googlee.yaml -f microsoftt.yaml -f oraclee.yaml
 echo "=========================== DONE ============================="
 echo""
 
-docker exec cli echo $FABRIC_CFG_PATH
-docker exec cli ./scripts/test.sh
-#docker exec cli ./scripts/channel-setup.sh
+docker exec cli ./scripts/channel-setup.sh
