@@ -19,10 +19,10 @@ services:
     environment:
       - FABRIC_CA_SERVER_CA_NAME=Apple-ca-server
       - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.googlee.com-cert.pem
-      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/7b620230c146f5e0eb46a2a38dac7240a49bdaac09822fcad53b64166fcfd946_sk
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/acafe96c274a75ad03d0469f816c48b17329512e05811fcf2171a27317ead9fe_sk
     ports:
       - "7454:7054"
-    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.googlee.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/7b620230c146f5e0eb46a2a38dac7240a49bdaac09822fcad53b64166fcfd946_sk -b admin:adminpw -d'
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.googlee.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/acafe96c274a75ad03d0469f816c48b17329512e05811fcf2171a27317ead9fe_sk -b admin:adminpw -d'
     volumes:
       - ./crypto-config/peerOrganizations/googlee.com/ca/:/etc/hyperledger/fabric-ca-server-config
     networks:
@@ -59,11 +59,11 @@ services:
       - CORE_PEER_LISTENADDRESS=0.0.0.0:7451
       - CORE_PEER_CHAINCODEADDRESS=peer0.googlee.com:7452
       - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:7452
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.googlee.com:8451
+      #- CORE_PEER_GOSSIP_BOOTSTRAP=peer1.googlee.com:8451
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.googlee.com:7451
       - CORE_PEER_LOCALMSPID=googleeMSP
       - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=googlee.couchdb.0.com:5484
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=googlee.couchdb.0.com:5984
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
     volumes:
@@ -90,10 +90,10 @@ services:
       - CORE_PEER_CHAINCODEADDRESS=peer1.googlee.com:8452
       - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:8452
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.googlee.com:8451
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.googlee.com:7451
+      #- CORE_PEER_GOSSIP_BOOTSTRAP=peer0.googlee.com:7451
       - CORE_PEER_LOCALMSPID=googleeMSP
       - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=googlee.couchdb.1.com:6484
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=googlee.couchdb.1.com:5984
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
     volumes:

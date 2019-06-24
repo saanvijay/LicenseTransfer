@@ -19,10 +19,10 @@ services:
     environment:
       - FABRIC_CA_SERVER_CA_NAME=Apple-ca-server
       - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.microsoftt.com-cert.pem
-      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/8b463c417d248606ef661c2e1434b9cd640d21983c4431f80a115788f654d3aa_sk
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/738335b59e21828d7ed2d6fabeb2e38b20d364353ce5062e978ba4bddc7e00b5_sk
     ports:
       - "7254:7054"
-    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.microsoftt.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/8b463c417d248606ef661c2e1434b9cd640d21983c4431f80a115788f654d3aa_sk -b admin:adminpw -d'
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.microsoftt.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/738335b59e21828d7ed2d6fabeb2e38b20d364353ce5062e978ba4bddc7e00b5_sk -b admin:adminpw -d'
     volumes:
       - ./crypto-config/peerOrganizations/microsoftt.com/ca/:/etc/hyperledger/fabric-ca-server-config
     networks:
@@ -59,11 +59,11 @@ services:
       - CORE_PEER_LISTENADDRESS=0.0.0.0:7251
       - CORE_PEER_CHAINCODEADDRESS=peer0.microsoftt.com:7252
       - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:7252
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.microsoftt.com:8251
+      #- CORE_PEER_GOSSIP_BOOTSTRAP=peer1.microsoftt.com:8251
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.microsoftt.com:7251
       - CORE_PEER_LOCALMSPID=microsofttMSP
       - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=microsoftt.couchdb.0.com:5284
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=microsoftt.couchdb.0.com:5984
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
     volumes:
@@ -90,10 +90,10 @@ services:
       - CORE_PEER_CHAINCODEADDRESS=peer1.microsoftt.com:8252
       - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:8252
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.microsoftt.com:8251
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.microsoftt.com:7251
+      #- CORE_PEER_GOSSIP_BOOTSTRAP=peer0.microsoftt.com:7251
       - CORE_PEER_LOCALMSPID=microsofttMSP
       - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=microsoftt.couchdb.1.com:6284
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=microsoftt.couchdb.1.com:5984
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
     volumes:

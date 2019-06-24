@@ -19,10 +19,10 @@ services:
     environment:
       - FABRIC_CA_SERVER_CA_NAME=Apple-ca-server
       - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.ibmm.com-cert.pem
-      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/cd706ff2821f3af4e3a6af0eb945b85df4e24ad93bb3173842f0edf1bc42951e_sk
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/8e76cc8c611732886e70b40d302b781bf4c674964bb55c49a199af5bbc38bac8_sk
     ports:
       - "7354:7054"
-    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.ibmm.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/cd706ff2821f3af4e3a6af0eb945b85df4e24ad93bb3173842f0edf1bc42951e_sk -b admin:adminpw -d'
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.ibmm.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/8e76cc8c611732886e70b40d302b781bf4c674964bb55c49a199af5bbc38bac8_sk -b admin:adminpw -d'
     volumes:
       - ./crypto-config/peerOrganizations/ibmm.com/ca/:/etc/hyperledger/fabric-ca-server-config
     networks:
@@ -59,11 +59,11 @@ services:
       - CORE_PEER_LISTENADDRESS=0.0.0.0:7351
       - CORE_PEER_CHAINCODEADDRESS=peer0.ibmm.com:7352
       - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:7352
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.ibmm.com:8351
+   #   - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.ibmm.com:8351
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.ibmm.com:7351
       - CORE_PEER_LOCALMSPID=ibmmMSP
       - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=ibmm.couchdb.0.com:5384
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=ibmm.couchdb.0.com:5984
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
     volumes:
@@ -90,10 +90,10 @@ services:
       - CORE_PEER_CHAINCODEADDRESS=peer1.ibmm.com:8352
       - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:8352
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.ibmm.com:8351
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.ibmm.com:7351
+    #  - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.ibmm.com:7351
       - CORE_PEER_LOCALMSPID=ibmmMSP
       - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=ibmm.couchdb.1.com:6384
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=ibmm.couchdb.1.com:5984
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
     volumes:

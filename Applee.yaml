@@ -19,10 +19,10 @@ services:
     environment:
       - FABRIC_CA_SERVER_CA_NAME=Apple-ca-server
       - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.Applee.com-cert.pem
-      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/cdd579128476739cc02a5dec3381c39d78d6c5448d4b5abda60d0f5857f5bd52_sk
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/520f75c7dc7e69336511d7c6f8465743c0a648ff6cfa4711f998faf482594bb3_sk
     ports:
       - "7054:7054"
-    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.Applee.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/cdd579128476739cc02a5dec3381c39d78d6c5448d4b5abda60d0f5857f5bd52_sk -b admin:adminpw -d'
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.Applee.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/520f75c7dc7e69336511d7c6f8465743c0a648ff6cfa4711f998faf482594bb3_sk -b admin:adminpw -d'
     volumes:
       - ./crypto-config/peerOrganizations/Applee.com/ca/:/etc/hyperledger/fabric-ca-server-config
     networks:
@@ -59,7 +59,7 @@ services:
       - CORE_PEER_LISTENADDRESS=0.0.0.0:7051
       - CORE_PEER_CHAINCODEADDRESS=peer0.Applee.com:7052
       - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:7052
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.Applee.com:8051
+#      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.Applee.com:8051
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.Applee.com:7051
       - CORE_PEER_LOCALMSPID=AppleeMSP
       - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
@@ -90,10 +90,10 @@ services:
       - CORE_PEER_CHAINCODEADDRESS=peer1.Applee.com:8052
       - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:8052
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.Applee.com:8051
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.Applee.com:7051
+#      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.Applee.com:7051
       - CORE_PEER_LOCALMSPID=AppleeMSP
       - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=Applee.couchdb.1.com:6984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=Applee.couchdb.1.com:5984
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
     volumes:

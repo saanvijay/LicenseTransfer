@@ -32,4 +32,5 @@ echo "=========================== DONE ============================="
 echo""
 
 docker exec cli echo $FABRIC_CFG_PATH
-docker exec cli ./scripts/channel-setup.sh
+docker exec cli ./scripts/test.sh
+#docker exec cli ./scripts/channel-setup.sh

@@ -19,10 +19,10 @@ services:
     environment:
       - FABRIC_CA_SERVER_CA_NAME=Apple-ca-server
       - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.oraclee.com-cert.pem
-      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/d9e2ef55b8e9e68c786b10ad1ab9b35ad54bbedf7fd831d64097daae85aed1fa_sk
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/e86a9c061e997d93097a3de24b2e6431b5ac89ed7ab9b359217f0feb0fcccc8d_sk
     ports:
       - "7154:7054"
-    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.oraclee.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/d9e2ef55b8e9e68c786b10ad1ab9b35ad54bbedf7fd831d64097daae85aed1fa_sk -b admin:adminpw -d'
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.oraclee.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/e86a9c061e997d93097a3de24b2e6431b5ac89ed7ab9b359217f0feb0fcccc8d_sk -b admin:adminpw -d'
     volumes:
       - ./crypto-config/peerOrganizations/oraclee.com/ca/:/etc/hyperledger/fabric-ca-server-config
     networks:
@@ -59,11 +59,11 @@ services:
       - CORE_PEER_LISTENADDRESS=0.0.0.0:7151
       - CORE_PEER_CHAINCODEADDRESS=peer0.oraclee.com:7152
       - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:7152
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.oraclee.com:8151
+     # - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.oraclee.com:8151
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.oraclee.com:7151
       - CORE_PEER_LOCALMSPID=oracleeMSP
       - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=oraclee.couchdb.0.com:5184
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=oraclee.couchdb.0.com:5984
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
     volumes:
@@ -90,10 +90,10 @@ services:
       - CORE_PEER_CHAINCODEADDRESS=peer1.oraclee.com:8152
       - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:8152
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.oraclee.com:8151
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.oraclee.com:7151
+      #- CORE_PEER_GOSSIP_BOOTSTRAP=peer0.oraclee.com:7151
       - CORE_PEER_LOCALMSPID=oracleeMSP
       - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=oraclee.couchdb.1.com:6184
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=oraclee.couchdb.1.com:5984
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
     volumes:
