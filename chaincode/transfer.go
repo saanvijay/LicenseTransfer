@@ -8,13 +8,16 @@ import (
 	"bytes"
 	"fmt"
 	"time"
+	"io"
+	"crypto/sha256"
 	"encoding/json"
-        "github.com/hyperledger/fabric/core/chaincode/shim"
+	"encoding/hex"
+    "github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
 )
 
 type LcUser struct {
-	LcToken		      string `json:"LcToken"`
+	LcToken		          string `json:"LcToken"`
 	CompanyName           string `json:"CompanyName"`
 	ProductName           string `json:"ProductName"`
 	Validity              string `json:"Validity"`
@@ -24,7 +27,9 @@ type License struct {
 	RootLcToken           string `json:"RootLcToken"`
 	TotalDaysValidity     string `json:"TotalDaysValidity"`
 	NumberOfUsersShared   string `json:"NumberOfUsersShared"`
-        LUser                []LcUser `json:"LUser"`
+	LastTransaction       string `json:"LastTransaction"`
+	User                  []LcUser `json:"LUser"`
+	
 
 }
 
@@ -50,8 +55,8 @@ func (l *License) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	if function == "UpdateLicense" {
 		return p.UpdateLicense(stub, args)
 	}
-	if function == "RequestLicense" {
-		return p.RequestLicense(stub, args)
+	if function == "GetLicense" {
+		return p.GetLicense(stub, args)
 	}
 	if function == "GetAllLicenses" {
 		return p.GetAllLicenses(stub, args)
@@ -80,7 +85,7 @@ func (l *License) UpdateLicense(stub shim.ChaincodeStubInterface, args []string)
 		return shim.Error(err.Error())
 	}
 
-        var bytesread []byte
+    var bytesread []byte
 	bytesread, err = stub.GetState(sourceLicense.RootLcToken)
 	err = json.Unmarshal(bytesread, &destLicense)
 	if err != nil {
@@ -89,7 +94,7 @@ func (l *License) UpdateLicense(stub shim.ChaincodeStubInterface, args []string)
 	}
 
 	destLicense.LastTransaction = time.Now().String()
-        destLicense.TotalDaysValidity -= 1
+    destLicense.TotalDaysValidity -= 1
 
 	// Start - Put into Couch DB
 	JSONBytes, err := json.Marshal(destLicense)
@@ -97,9 +102,11 @@ func (l *License) UpdateLicense(stub shim.ChaincodeStubInterface, args []string)
 		fmt.Println("Unable to Marshal UpdateLicense: ", err)
 		return shim.Error(err.Error())
 	}
-        fmt.Printf("objplanentiyqueryResults : %v\n", destLicense)
-        fmt.Printf("LcToken : %v\n", destLicense.LcToken)
+
+    fmt.Printf("objplanentiyqueryResults : %v\n", destLicense)
+    fmt.Printf("LcToken : %v\n", destLicense.LcToken)
 	err = stub.PutState(destLicense.LcToken, JSONBytes)
+
 	// End - Put into Couch DB
 	if err != nil {
 		fmt.Println("Unable to make transaction for UpdateLicense: ", err)
@@ -119,7 +126,7 @@ func (l *License) GetLicense(stub shim.ChaincodeStubInterface, args []string) pb
 
 	//fetch data from couch db starts here
 	var TokenId = args[0]
-	queryString := fmt.Sprintf("{\"selector\":{\"LcToken\":{\"$eq\": \"%s\"}}}", TokenId)
+	queryString := fmt.Sprintf("{\"selector\":{\"RootLcToken\":{\"$eq\": \"%s\"}}}", TokenId)
 	queryResults, err := getQueryResultForQueryString(stub, queryString)
 	//fetch data from couch db ends here
 	if err != nil {
@@ -131,6 +138,26 @@ func (l *License) GetLicense(stub shim.ChaincodeStubInterface, args []string) pb
 	return shim.Success(queryResults)
 }
 
+func (l *License) GetAllLicenses(stub shim.ChaincodeStubInterface, args []string) pb.Response { 
+	var err error
+
+	if len(args) < 1 {
+		fmt.Println("Invalid number of arguments")
+		return shim.Error(err.Error())
+	}
+
+	//fetch data from couch db starts here
+	queryString := fmt.Sprintf("{\"selector\":{\"RootLcToken\":{\"$eq\": \"%s\"}}}", "null")
+	queryResults, err := getQueryResultForQueryString(stub, queryString)
+	//fetch data from couch db ends here
+	if err != nil {
+		fmt.Printf("Unable to get All License details: %s\n", err)
+		return shim.Error(err.Error())
+	}
+	fmt.Printf("License Details : %v\n", queryResults)
+
+	return shim.Success(queryResults)
+}
 func (l *License) GetTransactionHistoryForKey(stub shim.ChaincodeStubInterface, args []string) pb.Response { 
 	var err error
 
@@ -146,69 +173,46 @@ func (l *License) GetTransactionHistoryForKey(stub shim.ChaincodeStubInterface, 
 
 func (l *License) GenerateLicense(stub shim.ChaincodeStubInterface, args []string) pb.Response { 
 	var err error
-	var objPlanEntity PlanEntity
+	var licEntity License
+	var objUser LcUser
 
 	if len(args) < 1 {
 		fmt.Println("Invalid number of arguments")
 		return shim.Error(err.Error())
 	}
 
-	err = json.Unmarshal([]byte(args[0]), &objPlanEntity)
+	err = json.Unmarshal([]byte(args[0]), &objUser)
 	if err != nil {
-		fmt.Println("Unable to unmarshal data in AddPlan : ", err)
+		fmt.Println("Unable to unmarshal data in GenerateLicense : ", err)
 		return shim.Error(err.Error())
 	}
-	objPlanEntity.ObjType = "PlanEntity"
-	objPlanEntity.LastDateChangeTime = time.Now().String()
+
+	// Token Generation
+	input := strings.NewReader(Luser.ProductName + Luser.CompanyName + LUser.Validity + time.Now().String())
+	hash := sha256.New()
+	if _, err := io.Copy(hash, input); err != nil {
+    	log.Fatal(err)
+	}
+    
+	licEntity.RootLcToken = hex.EncodeToString(hash.Sum(nil)
+	objUser.AvailableForShare = 1
+	objUser.LcToken = "null"
+	licEntity.User = make([]objUser, 0)
+	licEntity.LastTransaction = time.Now().String()
 
 	// Start - Put into Couch DB
-	JSONBytes, err := json.Marshal(objPlanEntity)
+	JSONBytes, err := json.Marshal(licEntity)
 	if err != nil {
-		fmt.Println("Unable to Marshal AddPlan: ", err)
+		fmt.Println("Unable to Marshal GenerateLicense: ", err)
 		return shim.Error(err.Error())
 	}
-        fmt.Printf("objplanentity : %v\n", objPlanEntity.NodeName)
-	err = stub.PutState(objPlanEntity.NodeName, JSONBytes)
+    fmt.Printf("licEntity : %v\n", licEntity.RootLcToken)
+	err = stub.PutState(licEntity.RootLcToken, JSONBytes)
 	// End - Put into Couch DB
 	if err != nil {
-		fmt.Println("Unable to make transaction for AddPlan: ", err)
+		fmt.Println("Unable to make transaction for GenerateLicense: ", err)
 		return shim.Error(err.Error())
 	}
-
-	return shim.Success(nil)
-}
-
-func (p *PlanEntity) UpdatePlan(stub shim.ChaincodeStubInterface, args []string) pb.Response { 
-	var objStartendDate PlanEntity
-	var err error
-
-	if len(args) < 3 {
-		fmt.Println("Invalid number of arguments")
-		return shim.Error(err.Error())
-	}
-
-	// code to get data from blockchain using dynamic key starts here
-	var bytesread []byte
-	bytesread, err = stub.GetState(args[0])
-	err = json.Unmarshal(bytesread, &objStartendDate)
-	if err != nil {
-		fmt.Println("Unable to unmarshal data in UpdatePlan() : ", err)
-		return shim.Error(err.Error())
-	}
-
-	// code to get data from blockchain using dynamic key ends here
-	objStartendDate.StartDate =  args[1]
-	objStartendDate.EndDate   =  args[2]
-	objStartendDate.LastDateChangeTime = time.Now().String()
-
-	// Start - Put into Couch DB
-	JSONBytes, err := json.Marshal(objStartendDate)
-	err = stub.PutState(objStartendDate.NodeName, JSONBytes)
-	if err != nil {
-		fmt.Println("Unable to make transaction for UpdatePlan : ", err)
-		return shim.Error(err.Error())
-	}
-	// End - Put into Couch DB
 
 	return shim.Success(nil)
 }
