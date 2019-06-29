@@ -18,19 +18,19 @@ import (
 
 type LcUser struct {
 	LcToken		          string `json:"LcToken"`
+	UserId                string `json:"UserId"`
 	CompanyName           string `json:"CompanyName"`
 	ProductName           string `json:"ProductName"`
 	Validity              string `json:"Validity"`
 	AvailableForShare     string `json:"AvailableForShare"`
 }
+
 type License struct {
 	RootLcToken           string `json:"RootLcToken"`
 	TotalDaysValidity     string `json:"TotalDaysValidity"`
 	NumberOfUsersShared   string `json:"NumberOfUsersShared"`
 	LastTransaction       string `json:"LastTransaction"`
 	User                  []LcUser `json:"LUser"`
-	
-
 }
 
 // Init chaincode
@@ -69,6 +69,57 @@ func (l *License) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	return shim.Error("Recieved unknown function invocation!")
 }
 
+func (l *License) ShareLicense(stub shim.ChaincodeStubInterface, args []string) pb.Response { 
+	var err error
+	var sourceLicense License
+	var destLicense License
+
+	if len(args) < 1 {
+		fmt.Println("Invalid number of arguments")
+		return shim.Error(err.Error())
+	}
+
+	err = json.Unmarshal([]byte(args[0]), &sourceLicense)
+	if err != nil {
+		fmt.Println("Unable to unmarshal data in UpdatLicense : ", err)
+		return shim.Error(err.Error())
+	}
+
+    var bytesread []byte
+	bytesread, err = stub.GetState(sourceLicense.RootLcToken)
+	err = json.Unmarshal(bytesread, &destLicense)
+	if err != nil {
+		fmt.Println("Unable to unmarshal data in UpdateLicense: ", err)
+		return shim.Error(err.Error())
+	}
+
+	destLicense.LastTransaction = time.Now().String()
+	if destLicense.NumberOfUsersShared != 0 {
+		destLicense.TotalDaysValidity -= 1
+		for i, user = range len(destLicense.User) {
+			destLicense.User[i].Validity -= 1
+		}
+	}
+    
+	// Start - Put into Couch DB
+	JSONBytes, err := json.Marshal(destLicense)
+	if err != nil {
+		fmt.Println("Unable to Marshal UpdateLicense: ", err)
+		return shim.Error(err.Error())
+	}
+
+    fmt.Printf("objplanentiyqueryResults : %v\n", destLicense)
+    fmt.Printf("LcToken : %v\n", destLicense.LcToken)
+	err = stub.PutState(destLicense.LcToken, JSONBytes)
+
+	// End - Put into Couch DB
+	if err != nil {
+		fmt.Println("Unable to make transaction for UpdateLicense: ", err)
+		return shim.Error(err.Error())
+	}
+
+	return shim.Success(nil)
+}
 func (l *License) UpdateLicense(stub shim.ChaincodeStubInterface, args []string) pb.Response { 
 	var err error
 	var sourceLicense License
@@ -94,8 +145,13 @@ func (l *License) UpdateLicense(stub shim.ChaincodeStubInterface, args []string)
 	}
 
 	destLicense.LastTransaction = time.Now().String()
-    destLicense.TotalDaysValidity -= 1
-
+	if destLicense.NumberOfUsersShared != 0 {
+		destLicense.TotalDaysValidity -= 1
+		for i, user = range len(destLicense.User) {
+			destLicense.User[i].Validity -= 1
+		}
+	}
+    
 	// Start - Put into Couch DB
 	JSONBytes, err := json.Marshal(destLicense)
 	if err != nil {
@@ -198,6 +254,7 @@ func (l *License) GenerateLicense(stub shim.ChaincodeStubInterface, args []strin
 	objUser.AvailableForShare = 1
 	objUser.LcToken = "null"
 	licEntity.User = make([]objUser, 0)
+	licEntity.NumberOfUsersShared = 0
 	licEntity.LastTransaction = time.Now().String()
 
 	// Start - Put into Couch DB
