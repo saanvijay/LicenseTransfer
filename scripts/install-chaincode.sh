@@ -27,7 +27,7 @@ installChaincodeWithRetry() {
   . .config.core.txt
 
   set -x
-  peer chaincode install -n $CC_NAME -v $VER -p ./chaincode >& log.txtx
+  peer chaincode install -n $CC_NAME -v $VER -p github.com/chaincode >& log.txtx
   res=$?
   set +x
   cat log.txt
@@ -35,98 +35,93 @@ installChaincodeWithRetry() {
     COUNTER=$(expr $COUNTER + 1)
     echo "${PEER}.${ORG}.com failed to join the channel, Retry after $DELAY seconds"
     sleep $DELAY
-    installChaicodeWithRetry $PEER $ORG
+    installChaincodeWithRetry $PEER $ORG
   else
     COUNTER=1
   fi
   verifyResult $res "After $MAX_RETRY attempts, ${PEER}.${ORG}.com has failed to install chaincode '$CC_NAME' "
 }
 
-# peer0.Applee channel join
-echo "========== Joining peer0.Applee.com to channel $CHANNEL_NAME =========="
+# peer0.Applee Installing chaincode in
+echo "========== Installing chaincode in peer0.Applee.com to channel $CHANNEL_NAME =========="
 sleep 20
 echo "export CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/Applee.com/users/Admin@Applee.com/msp" > .config.core.txt
 echo "export CORE_PEER_ADDRESS=peer0.Applee.com:7051" >> .config.core.txt
 echo "export CORE_PEER_LOCALMSPID=AppleeMSP" >> .config.core.txt
 echo "export CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/Applee.com/peers/peer0.Applee.com/tls/ca.crt" >> .config.core.txt
-joinChannelWithRetry "peer0" "Applee" 
-peer channel update -o orderer.lictransfer.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/${CORE_PEER_LOCALMSPID}anchors.tx --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA
+installChaincodeWithRetry "peer0" "Applee" 
 
-# peer1.Applee channel join
-echo "========== Joining peer1.Applee.com to channel $CHANNEL_NAME =========="
+# peer1.Applee Installing chaincode in
+echo "========== Installing chaincode inpeer1.Applee.com to channel $CHANNEL_NAME =========="
 echo "export CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/Applee.com/users/Admin@Applee.com/msp" > .config.core.txt
 echo "export CORE_PEER_ADDRESS=peer1.Applee.com:8051" >> .config.core.txt
 echo "export CORE_PEER_LOCALMSPID=AppleeMSP" >> .config.core.txt
 echo "export CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/Applee.com/peers/peer1.Applee.com/tls/ca.crt" >> .config.core.txt
-joinChannelWithRetry "peer1" "Applee"
+installChaincodeWithRetry "peer1" "Applee"
 
-# peer0.ibmm channel join
-echo "========== Joining peer0.ibmm.com to channel $CHANNEL_NAME =========="
+# peer0.ibmm Installing chaincode in
+echo "========== Installing chaincode in peer0.ibmm.com to channel $CHANNEL_NAME =========="
 echo "export CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/ibmm.com/users/Admin@ibmm.com/msp" > .config.core.txt
 echo "export CORE_PEER_ADDRESS=peer0.ibmm.com:7351" >> .config.core.txt
 echo "export CORE_PEER_LOCALMSPID=ibmmMSP" >> .config.core.txt
 echo "export CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/ibmm.com/peers/peer0.ibmm.com/tls/ca.crt" >> .config.core.txt
-joinChannelWithRetry "peer0" "ibmm"
-peer channel update -o orderer.lictransfer.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/${CORE_PEER_LOCALMSPID}anchors.tx --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA
+installChaincodeWithRetry "peer0" "ibmm"
 
-# peer1.ibmm channel join
-echo "========== Joining peer1.ibmm.com to channel $CHANNEL_NAME =========="
+# peer1.ibmm Installing chaincode in
+echo "========== Installing chaincode in peer1.ibmm.com to channel $CHANNEL_NAME =========="
 echo "export CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/ibmm.com/users/Admin@ibmm.com/msp" > .config.core.txt
 echo "export CORE_PEER_ADDRESS=peer1.ibmm.com:8351" >> .config.core.txt
 echo "export CORE_PEER_LOCALMSPID=ibmmMSP" >> .config.core.txt
 echo "export CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/ibmm.com/peers/peer1.ibmm.com/tls/ca.crt" >> .config.core.txt
-joinChannelWithRetry "peer1" "ibmm"
+installChaincodeWithRetry "peer1" "ibmm"
 
-# peer0.oraclee channel join
-echo "========== Joining peer0.oraclee.com to channel $CHANNEL_NAME =========="
+# peer0.oraclee Installing chaincode in
+echo "========== Installing chaincode in peer0.oraclee.com to channel $CHANNEL_NAME =========="
 echo "export CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/oraclee.com/users/Admin@oraclee.com/msp" > .config.core.txt
 echo "export CORE_PEER_ADDRESS=peer0.oraclee.com:7151">> .config.core.txt
 echo "export CORE_PEER_LOCALMSPID=oracleeMSP" >> .config.core.txt
 echo "export CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/oraclee.com/peers/peer1.oraclee.com/tls/ca.crt" >> .config.core.txt
-joinChannelWithRetry "peer0" "oraclee"
-peer channel update -o orderer.lictransfer.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/${CORE_PEER_LOCALMSPID}anchors.tx --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA
+installChaincodeWithRetry "peer0" "oraclee"
 
-# peer1.oraclee channel join
-echo "========== Joining peer1.oraclee.com to channel $CHANNEL_NAME =========="
+# peer1.oraclee Installing chaincode in
+echo "========== Installing chaincode in peer1.oraclee.com to channel $CHANNEL_NAME =========="
 echo "export CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/oraclee.com/users/Admin@oraclee.com/msp" > .config.core.txt
 echo "export CORE_PEER_ADDRESS=peer1.oraclee.com:8151" >> .config.core.txt
 echo "export CORE_PEER_LOCALMSPID=oracleeMSP" >> .config.core.txt
 echo "export CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/oraclee.com/peers/peer1.oraclee.com/tls/ca.crt" >> .config.core.txt
-joinChannelWithRetry "peer1" "oraclee"
+installChaincodeWithRetry "peer1" "oraclee"
 
-# peer0.microsoftt channel join
-echo "========== Joining peer0.microsoftt.com to channel $CHANNEL_NAME =========="
+# peer0.microsoftt Installing chaincode in
+echo "========== Installing chaincode in peer0.microsoftt.com to channel $CHANNEL_NAME =========="
 echo "export CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/microsoftt.com/users/Admin@microsoftt.com/msp" > .config.core.txt
 echo "export CORE_PEER_ADDRESS=peer0.microsoftt.com:7251" >> .config.core.txt
 echo "export CORE_PEER_LOCALMSPID=microsofttMSP" >> .config.core.txt
 echo "export CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/microsoftt.com/peers/peer1.microsoftt.com/tls/ca.crt" >> .config.core.txt
-joinChannelWithRetry "peer0" "microsoftt"
-peer channel update -o orderer.lictransfer.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/${CORE_PEER_LOCALMSPID}anchors.tx --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA
+installChaincodeWithRetry "peer0" "microsoftt"
 
-# peer1.microsoftt channel join
-echo "========== Joining peer1.microsoftt.com to channel $CHANNEL_NAME =========="
+# peer1.microsoftt Installing chaincode in
+echo "========== Installing chaincode in peer1.microsoftt.com to channel $CHANNEL_NAME =========="
 echo "export CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/microsoftt.com/users/Admin@microsoftt.com/msp" > .config.core.txt
 echo "export CORE_PEER_ADDRESS=peer1.microsoftt.com:8251" >> .config.core.txt
 echo "export CORE_PEER_LOCALMSPID=microsofttMSP" >> .config.core.txt
 echo "export CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/microsoftt.com/peers/peer1.microsoftt.com/tls/ca.crt" >> .config.core.txt
-joinChannelWithRetry "peer1" "microsoftt"
+installChaincodeWithRetry "peer1" "microsoftt"
 
-# peer0.googlee channel join
-echo "========== Joining peer0.googlee.com to channel $CHANNEL_NAME =========="
+# peer0.googlee Installing chaincode in
+echo "========== Installing chaincode in peer0.googlee.com to channel $CHANNEL_NAME =========="
 echo "export CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/googlee.com/users/Admin@googlee.com/msp" > .config.core.txt
 echo "export CORE_PEER_ADDRESS=peer0.googlee.com:7451" >> .config.core.txt
 echo "export CORE_PEER_LOCALMSPID=googleeMSP" >> .config.core.txt
 echo "export CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/googlee.com/peers/peer1.googlee.com/tls/ca.crt" >> .config.core.txt
-joinChannelWithRetry "peer0" "googlee"
-peer channel update -o orderer.lictransfer.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/${CORE_PEER_LOCALMSPID}anchors.tx --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA
+installChaincodeWithRetry "peer0" "googlee"
 
-# peer1.googlee channel join
-echo "========== Joining peer1.googlee.com to channel $CHANNEL_NAME =========="
+# peer1.googlee Installing chaincode in
+echo "========== Installing chaincode in peer1.googlee.com to channel $CHANNEL_NAME =========="
 echo "export CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/googlee.com/users/Admin@googlee.com/msp" > .config.core.txt
 echo "export CORE_PEER_ADDRESS=peer1.googlee.com:8451" >> .config.core.txt
 echo "export CORE_PEER_LOCALMSPID=googleeMSP" >> .config.core.txt
 echo "export CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/googlee.com/peers/peer1.googlee.com/tls/ca.crt" >> .config.core.txt
-joinChannelWithRetry "peer1" "googlee"
+installChaincodeWithRetry "peer1" "googlee"
 
 echo""
 echo "==================================== DONE ======================================"

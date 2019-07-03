@@ -1,9 +1,19 @@
-#
-# Copyright IBM Corp All Rights Reserved
-#
-# SPDX-License-Identifier: Apache-2.0
-#
+#!/bin/bash
 
-echo "========== Instantiating chaincode v$1 =========="
-peer chaincode instantiate -o orderer.example.com:7050 --tls $CORE_PEER_TLS_ENABLED --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C $CHANNEL_NAME -n $CC_NAME -c '{"Args": []}' -v $1 -P "OR ('Org1MSP.member','Org2MSP.member')"
+export FABRIC_CFG_PATH=/etc/hyperledger/fabric
+echo $FABRIC_CFG_PATH
+
+CC_NAME=c2c
+VER=1
+CHANNEL_NAME=lic-transfer-channel
+
+ORDERER_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/lictransfer.com/orderers/orderer.lictransfer.com/msp/tlscacerts/tlsca.lictransfer.com-cert.pem
+
+echo "========== Instantiating chaincode v$VER =========="
+peer chaincode instantiate -o orderer.lictransfer.com:7050  \
+                           --tls $CORE_PEER_TLS_ENABLED     \
+                           --cafile $ORDERER_CA             \
+                           -C $CHANNEL_NAME -n $CC_NAME     \
+                           -c '{"Args": ["Init"]}' -v $VER  \
+                           -P "OR ('AppleeMSP.client','ibmmMSP.client', 'oraclee.client', 'microsofttMSP.client','googleeMSP.client')"
 

@@ -32,3 +32,8 @@ echo "=========================== DONE ============================="
 echo""
 
 docker exec cli ./scripts/channel-setup.sh
+
+docker exec cli ./scripts/install-chaincode.sh
+
+docker exec cli ./scripts/instantiate-chaincode.sh
+

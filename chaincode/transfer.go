@@ -23,6 +23,7 @@ type LcUser struct {
 	ProductName           string `json:"ProductName"`
 	Validity              string `json:"Validity"`
 	AvailableForShare     string `json:"AvailableForShare"`
+	Status                string `json:"Status"`
 }
 
 type License struct {
@@ -68,6 +69,7 @@ func (l *License) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	fmt.Println("Function not found!")
 	return shim.Error("Recieved unknown function invocation!")
 }
+
 
 func (l *License) ShareLicense(stub shim.ChaincodeStubInterface, args []string) pb.Response { 
 	var err error
@@ -120,6 +122,7 @@ func (l *License) ShareLicense(stub shim.ChaincodeStubInterface, args []string) 
 
 	return shim.Success(nil)
 }
+
 func (l *License) UpdateLicense(stub shim.ChaincodeStubInterface, args []string) pb.Response { 
 	var err error
 	var sourceLicense License
@@ -250,7 +253,7 @@ func (l *License) GenerateLicense(stub shim.ChaincodeStubInterface, args []strin
     	log.Fatal(err)
 	}
     
-	licEntity.RootLcToken = hex.EncodeToString(hash.Sum(nil)
+	licEntity.RootLcToken = hex.EncodeToString(hash.Sum(nil))
 	objUser.AvailableForShare = 1
 	objUser.LcToken = "null"
 	licEntity.User = make([]objUser, 0)
