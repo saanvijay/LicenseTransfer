@@ -6,6 +6,7 @@ package main
 
 import (
 	"bytes"
+        "strings"
 	"fmt"
 	"time"
 	"io"
@@ -17,19 +18,19 @@ import (
 )
 
 type LcUser struct {
-	LcToken		          string `json:"LcToken"`
+	LcToken		      string `json:"LcToken"`
 	UserId                string `json:"UserId"`
 	CompanyName           string `json:"CompanyName"`
 	ProductName           string `json:"ProductName"`
-	Validity              string `json:"Validity"`
-	AvailableForShare     string `json:"AvailableForShare"`
+	Validity              int64  `json:"Validity"`
+	AvailableForShare     bool   `json:"AvailableForShare"`
 	Status                string `json:"Status"`
 }
 
 type License struct {
 	RootLcToken           string `json:"RootLcToken"`
-	TotalDaysValidity     string `json:"TotalDaysValidity"`
-	NumberOfUsersShared   string `json:"NumberOfUsersShared"`
+	TotalDaysValidity     int64 `json:"TotalDaysValidity"`
+	NumberOfUsersShared   int64 `json:"NumberOfUsersShared"`
 	LastTransaction       string `json:"LastTransaction"`
 	User                  []LcUser `json:"LUser"`
 }
@@ -48,22 +49,22 @@ func (l *License) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	fmt.Println("Recieved function in chaincode: ", function)
 
 	if function == "GenerateLicense" {
-		return p.GenerateLicense(stub, args)
+		return l.GenerateLicense(stub, args)
 	}
 	if function == "ShareLicense" {
-		return p.ShareLicense(stub, args)
+		return l.ShareLicense(stub, args)
 	}
 	if function == "UpdateLicense" {
-		return p.UpdateLicense(stub, args)
+		return l.UpdateLicense(stub, args)
 	}
 	if function == "GetLicense" {
-		return p.GetLicense(stub, args)
+		return l.GetLicense(stub, args)
 	}
 	if function == "GetAllLicenses" {
-		return p.GetAllLicenses(stub, args)
+		return l.GetAllLicenses(stub, args)
 	}
 	if function == "GetTransactionHistoryForKey" {
-		return p.GetTransactionHistoryForKey(stub, args)
+		return l.GetTransactionHistoryForKey(stub, args)
 	}
 
 	fmt.Println("Function not found!")
@@ -98,8 +99,8 @@ func (l *License) ShareLicense(stub shim.ChaincodeStubInterface, args []string) 
 	destLicense.LastTransaction = time.Now().String()
 	if destLicense.NumberOfUsersShared != 0 {
 		destLicense.TotalDaysValidity -= 1
-		for i, user = range len(destLicense.User) {
-			destLicense.User[i].Validity -= 1
+                for _, usr := range destLicense.User {
+			usr.Validity -= 1
 		}
 	}
     
@@ -111,8 +112,8 @@ func (l *License) ShareLicense(stub shim.ChaincodeStubInterface, args []string) 
 	}
 
     fmt.Printf("objplanentiyqueryResults : %v\n", destLicense)
-    fmt.Printf("LcToken : %v\n", destLicense.LcToken)
-	err = stub.PutState(destLicense.LcToken, JSONBytes)
+    fmt.Printf("LcToken : %v\n", destLicense.RootLcToken)
+	err = stub.PutState(destLicense.RootLcToken, JSONBytes)
 
 	// End - Put into Couch DB
 	if err != nil {
@@ -150,8 +151,8 @@ func (l *License) UpdateLicense(stub shim.ChaincodeStubInterface, args []string)
 	destLicense.LastTransaction = time.Now().String()
 	if destLicense.NumberOfUsersShared != 0 {
 		destLicense.TotalDaysValidity -= 1
-		for i, user = range len(destLicense.User) {
-			destLicense.User[i].Validity -= 1
+                for _, usr := range destLicense.User {
+			usr.Validity -= 1
 		}
 	}
     
@@ -163,8 +164,8 @@ func (l *License) UpdateLicense(stub shim.ChaincodeStubInterface, args []string)
 	}
 
     fmt.Printf("objplanentiyqueryResults : %v\n", destLicense)
-    fmt.Printf("LcToken : %v\n", destLicense.LcToken)
-	err = stub.PutState(destLicense.LcToken, JSONBytes)
+    fmt.Printf("LcToken : %v\n", destLicense.RootLcToken)
+	err = stub.PutState(destLicense.RootLcToken, JSONBytes)
 
 	// End - Put into Couch DB
 	if err != nil {
@@ -247,16 +248,18 @@ func (l *License) GenerateLicense(stub shim.ChaincodeStubInterface, args []strin
 	}
 
 	// Token Generation
-	input := strings.NewReader(Luser.ProductName + Luser.CompanyName + LUser.Validity + time.Now().String())
+        tokenString := fmt.Sprintf("%s%s%d%s", objUser.ProductName, objUser.CompanyName, objUser.Validity, time.Now().String())
+	input := strings.NewReader(tokenString)
 	hash := sha256.New()
 	if _, err := io.Copy(hash, input); err != nil {
-    	log.Fatal(err)
+		fmt.Println("Unable to Generate Token in GenerateLicense : ", err)
+		return shim.Error(err.Error())
 	}
     
 	licEntity.RootLcToken = hex.EncodeToString(hash.Sum(nil))
-	objUser.AvailableForShare = 1
+	objUser.AvailableForShare = true
 	objUser.LcToken = "null"
-	licEntity.User = make([]objUser, 0)
+	licEntity.User = make([]LcUser, 0)
 	licEntity.NumberOfUsersShared = 0
 	licEntity.LastTransaction = time.Now().String()
 

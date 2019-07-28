@@ -15,5 +15,5 @@ peer chaincode instantiate -o orderer.lictransfer.com:7050  \
                            --cafile $ORDERER_CA             \
                            -C $CHANNEL_NAME -n $CC_NAME     \
                            -c '{"Args": ["Init"]}' -v $VER  \
-                           -P "OR ('AppleeMSP.client','ibmmMSP.client', 'oraclee.client', 'microsofttMSP.client','googleeMSP.client')"
+                           -P "OR ('AppleeMSP.peer','ibmmMSP.peer', 'oraclee.peer', 'microsofttMSP.peer','googleeMSP.peer')"
 

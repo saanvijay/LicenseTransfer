@@ -19,10 +19,10 @@ services:
     environment:
       - FABRIC_CA_SERVER_CA_NAME=Apple-ca-server
       - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.microsoftt.com-cert.pem
-      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/185d78d732dadf391f214509d87b12b5ae6897781be23285b10dd424af27feb2_sk
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA_MICROSOFTT_KEY
     ports:
       - "7254:7054"
-    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.microsoftt.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/185d78d732dadf391f214509d87b12b5ae6897781be23285b10dd424af27feb2_sk -b admin:adminpw -d'
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.microsoftt.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA_MICROSOFTT_KEY -b admin:adminpw -d'
     volumes:
       - ./crypto-config/peerOrganizations/microsoftt.com/ca/:/etc/hyperledger/fabric-ca-server-config
     networks:

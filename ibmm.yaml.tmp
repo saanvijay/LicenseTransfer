@@ -19,10 +19,10 @@ services:
     environment:
       - FABRIC_CA_SERVER_CA_NAME=Apple-ca-server
       - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.ibmm.com-cert.pem
-      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/3642bf299effe8b3fc4548ae151d6b1e0b3dfaf789b16ef05f1a277b0e6e54f5_sk
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA_IBMM_KEY
     ports:
       - "7354:7054"
-    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.ibmm.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/3642bf299effe8b3fc4548ae151d6b1e0b3dfaf789b16ef05f1a277b0e6e54f5_sk -b admin:adminpw -d'
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.ibmm.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA_IBMM_KEY -b admin:adminpw -d'
     volumes:
       - ./crypto-config/peerOrganizations/ibmm.com/ca/:/etc/hyperledger/fabric-ca-server-config
     networks:

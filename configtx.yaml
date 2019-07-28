@@ -9,10 +9,10 @@ Organizations:
         Policies:
             Readers:
                 Type: Signature
-                Rule: "OR('OrdererMSP.member')"
+                Rule: "OR('OrdererMSP.admin', 'OrdererMSP.peer', 'OrdererMSP.client', 'OrdererMSP.member')"
             Writers:
                 Type: Signature
-                Rule: "OR('OrdererMSP.member')"
+                Rule: "OR('OrdererMSP.admin', 'OrdererMSP.client', 'OrdererMSP.member')"
             Admins:
                 Type: Signature
                 Rule: "OR('OrdererMSP.admin')"
