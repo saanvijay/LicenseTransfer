@@ -72,7 +72,8 @@ services:
         - ./crypto-config/peerOrganizations/microsoftt.com/peers/peer0.microsoftt.com/tls:/etc/hyperledger/fabric/tls
         - peer0.microsoftt.com:/var/hyperledger/production
     ports:
-      - 7251:7051
+      - 7251:7251
+      - 7252:7252
     depends_on: 
       - microsoftt.couchdb.0.com
     networks:
@@ -102,7 +103,8 @@ services:
         - ./crypto-config/peerOrganizations/microsoftt.com/peers/peer1.microsoftt.com/tls:/etc/hyperledger/fabric/tls
         - peer1.microsoftt.com:/var/hyperledger/production
     ports:
-      - 8251:8051
+      - 8251:8251
+      - 8252:8252
     networks:
       - lic
     depends_on: 

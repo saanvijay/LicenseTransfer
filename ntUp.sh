@@ -13,6 +13,7 @@ done
 ARCH=$(uname -s | grep Darwin)
 if [ "$ARCH" == "Darwin" ]; then
   OPTS="-it"
+  rm -rf *.yamlt
 echo $OPTS
 else
   OPTS="-i"

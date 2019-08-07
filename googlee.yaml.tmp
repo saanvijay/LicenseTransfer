@@ -72,7 +72,8 @@ services:
         - ./crypto-config/peerOrganizations/googlee.com/peers/peer0.googlee.com/tls:/etc/hyperledger/fabric/tls
         - peer0.googlee.com:/var/hyperledger/production
     ports:
-      - 7451:7051
+      - 7451:7451
+      - 7452:7452
     depends_on: 
       - googlee.couchdb.0.com
     networks:
@@ -102,7 +103,8 @@ services:
         - ./crypto-config/peerOrganizations/googlee.com/peers/peer1.googlee.com/tls:/etc/hyperledger/fabric/tls
         - peer1.googlee.com:/var/hyperledger/production
     ports:
-      - 8451:8051
+      - 8451:8451
+      - 8452:8452
     networks:
       - lic
     depends_on: 

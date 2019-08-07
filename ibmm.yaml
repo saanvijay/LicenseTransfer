@@ -19,10 +19,10 @@ services:
     environment:
       - FABRIC_CA_SERVER_CA_NAME=Apple-ca-server
       - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.ibmm.com-cert.pem
-      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/3642bf299effe8b3fc4548ae151d6b1e0b3dfaf789b16ef05f1a277b0e6e54f5_sk
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/2762996d6afd57fa22b201b362318617966ff7ce1c69c3ab0e0efe9dc3a949ac_sk
     ports:
       - "7354:7054"
-    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.ibmm.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/3642bf299effe8b3fc4548ae151d6b1e0b3dfaf789b16ef05f1a277b0e6e54f5_sk -b admin:adminpw -d'
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.ibmm.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/2762996d6afd57fa22b201b362318617966ff7ce1c69c3ab0e0efe9dc3a949ac_sk -b admin:adminpw -d'
     volumes:
       - ./crypto-config/peerOrganizations/ibmm.com/ca/:/etc/hyperledger/fabric-ca-server-config
     networks:
@@ -72,7 +72,8 @@ services:
         - ./crypto-config/peerOrganizations/ibmm.com/peers/peer0.ibmm.com/tls:/etc/hyperledger/fabric/tls
         - peer0.ibmm.com:/var/hyperledger/production
     ports:
-      - 7351:7051
+      - 7351:7351
+      - 7352:7352
     depends_on: 
       - ibmm.couchdb.0.com
     networks:
@@ -102,7 +103,8 @@ services:
         - ./crypto-config/peerOrganizations/ibmm.com/peers/peer1.ibmm.com/tls:/etc/hyperledger/fabric/tls
         - peer1.ibmm.com:/var/hyperledger/production
     ports:
-      - 8351:8051
+      - 8351:8351
+      - 8352:8352
     networks:
       - lic
     depends_on: 

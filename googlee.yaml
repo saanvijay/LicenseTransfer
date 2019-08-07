@@ -19,10 +19,10 @@ services:
     environment:
       - FABRIC_CA_SERVER_CA_NAME=Apple-ca-server
       - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.googlee.com-cert.pem
-      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/14e55ef695707af446bf10f77ba4fc3ab3ec7731ecdb1592aacffd1638d401f1_sk
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/a877b5fbbf19accdc90c9949cecd437a76b8708e9cd4438b8bf9e5af63244f63_sk
     ports:
       - "7454:7054"
-    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.googlee.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/14e55ef695707af446bf10f77ba4fc3ab3ec7731ecdb1592aacffd1638d401f1_sk -b admin:adminpw -d'
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.googlee.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/a877b5fbbf19accdc90c9949cecd437a76b8708e9cd4438b8bf9e5af63244f63_sk -b admin:adminpw -d'
     volumes:
       - ./crypto-config/peerOrganizations/googlee.com/ca/:/etc/hyperledger/fabric-ca-server-config
     networks:
@@ -72,7 +72,8 @@ services:
         - ./crypto-config/peerOrganizations/googlee.com/peers/peer0.googlee.com/tls:/etc/hyperledger/fabric/tls
         - peer0.googlee.com:/var/hyperledger/production
     ports:
-      - 7451:7051
+      - 7451:7451
+      - 7452:7452
     depends_on: 
       - googlee.couchdb.0.com
     networks:
@@ -102,7 +103,8 @@ services:
         - ./crypto-config/peerOrganizations/googlee.com/peers/peer1.googlee.com/tls:/etc/hyperledger/fabric/tls
         - peer1.googlee.com:/var/hyperledger/production
     ports:
-      - 8451:8051
+      - 8451:8451
+      - 8452:8452
     networks:
       - lic
     depends_on: 

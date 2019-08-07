@@ -72,7 +72,8 @@ services:
         - ./crypto-config/peerOrganizations/ibmm.com/peers/peer0.ibmm.com/tls:/etc/hyperledger/fabric/tls
         - peer0.ibmm.com:/var/hyperledger/production
     ports:
-      - 7351:7051
+      - 7351:7351
+      - 7352:7352
     depends_on: 
       - ibmm.couchdb.0.com
     networks:
@@ -102,7 +103,8 @@ services:
         - ./crypto-config/peerOrganizations/ibmm.com/peers/peer1.ibmm.com/tls:/etc/hyperledger/fabric/tls
         - peer1.ibmm.com:/var/hyperledger/production
     ports:
-      - 8351:8051
+      - 8351:8351
+      - 8352:8352
     networks:
       - lic
     depends_on: 
