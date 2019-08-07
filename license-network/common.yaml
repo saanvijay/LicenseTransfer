@@ -1,0 +1,157 @@
+
+version: '2'
+
+volumes:
+  orderer.lictransfer.com:
+  peer0.Applee.com:
+  peer1.Applee.com:
+  peer0.ibmm.com:
+  peer1.ibmm.com:
+  peer0.googlee.com:
+  peer1.googlee.com:
+  peer0.microsoftt.com:
+  peer1.microsoftt.com:
+  peer0.oraclee.com:
+  peer1.oraclee.com:
+  cli:
+
+networks:
+  lic:
+
+services:
+  orderer.lictransfer.com:
+    container_name: orderer.lictransfer.com
+    extends:
+      file: org-abstract.yaml
+      service: orderer-abstract
+    volumes:
+        - ./channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+        - ./crypto-config/ordererOrganizations/lictransfer.com/orderers/orderer.lictransfer.com/msp:/var/hyperledger/orderer/msp
+        - ./crypto-config/ordererOrganizations/lictransfer.com/orderers/orderer.lictransfer.com/tls:/var/hyperledger/orderer/tls
+        - orderer.lictransfer.com:/var/hyperledger/production/orderer
+    ports:
+      - 7050:7050
+    networks:
+      - lic
+
+  peer0.Applee.com:
+    container_name: peer0.Applee.com
+    extends:
+      file: org-abstract.yaml
+      service: peer-abstract
+    networks:
+      - lic
+
+  peer1.Applee.com:
+    container_name: peer1.Applee.com
+    extends:
+      file: org-abstract.yaml
+      service: peer-abstract
+    networks:
+      - lic
+
+  peer0.googlee.com:
+    container_name: peer0.googlee.com
+    extends:
+      file: org-abstract.yaml
+      service: peer-abstract
+    networks:
+      - lic
+
+  peer1.googlee.com:
+    container_name: peer1.googlee.com
+    extends:
+      file: org-abstract.yaml
+      service: peer-abstract
+    networks:
+      - lic
+
+  peer0.microsoftt.com:
+    container_name: peer0.microsoftt.com
+    extends:
+      file: org-abstract.yaml
+      service: peer-abstract
+    networks:
+      - lic
+
+  peer1.microsoftt.com:
+    container_name: peer1.microsoftt.com
+    extends:
+      file: org-abstract.yaml
+      service: peer-abstract
+    networks:
+      - lic
+
+  peer0.ibmm.com:
+    container_name: peer0.ibmm.com
+    extends:
+      file: org-abstract.yaml
+      service: peer-abstract
+    networks:
+      - lic
+
+  peer1.ibmm.com:
+    container_name: peer1.ibmm.com
+    extends:
+      file: org-abstract.yaml
+      service: peer-abstract
+    networks:
+      - lic
+
+  peer0.oraclee.com:
+    container_name: peer0.oraclee.com
+    extends:
+      file: org-abstract.yaml
+      service: peer-abstract
+    networks:
+      - lic
+
+  peer1.oraclee.com:
+    container_name: peer1.oraclee.com
+    extends:
+      file: org-abstract.yaml
+      service: peer-abstract
+    networks:
+      - lic
+
+  cli:
+    container_name: cli
+    image: hyperledger/fabric-tools:$IMAGE_TAG
+    tty: true
+    stdin_open: true
+    environment:
+      - GOPATH=/opt/gopath
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - FABRIC_LOGGING_SPEC=INFO
+      - CORE_PEER_ID=cli
+      - CORE_PEER_ADDRESS=peer0.Applee.com:7051
+      - CORE_PEER_LOCALMSPID=AppleeMSP
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/Applee.com/peers/peer0.Applee.com/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/Applee.com/peers/peer0.Applee.com/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/Applee.com/peers/peer0.Applee.com/tls/ca.crt
+      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/Applee.com/users/Admin@Applee.com/msp
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: /bin/bash
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./chaincode/:/opt/gopath/src/github.com/chaincode
+        - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+        - ./scripts:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
+        - ./channel-artifacts:/opt/gopath/src/github.com/hyperledger/fabric/peer/channel-artifacts
+
+    depends_on:
+      - orderer.lictransfer.com
+      - peer0.Applee.com
+      - peer1.Applee.com
+      - peer0.ibmm.com
+      - peer1.ibmm.com
+      - peer0.microsoftt.com
+      - peer1.microsoftt.com
+      - peer0.oraclee.com
+      - peer1.oraclee.com
+      - peer0.googlee.com
+      - peer1.googlee.com
+      
+    networks:
+      - lic

@@ -1,0 +1,29 @@
+{
+    "name": "LicenseTransfer",
+    "version": "1.0.0",
+    "description": "Transfer the license like money transfer",
+    "main": "server.js",
+    "dependencies": {
+        "angular": "^1.4.3",
+        "body-parser": "^1.19.0",
+        "cookie-parser": "^1.4.4",
+        "cors": "^2.8.5",
+        "crypto": "^1.0.1",
+        "ejs": "latest",
+        "express": "latest",
+        "fabric-ca-client": "^1.0.2",
+        "fabric-client": "^1.0.2",
+        "grpc": "^1.6.0",
+        "jsonwebtoken": "^8.5.1",
+        "mongoose": "^5.5.11",
+        "multer": "^1.4.1"
+    },
+    "license": "Apache-2.0",
+    "keywords": [
+        "Hyperledger",
+        "Fabric",
+        "Plans",
+        "License",
+        "Application"
+    ]
+}

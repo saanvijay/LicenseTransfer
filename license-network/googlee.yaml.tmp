@@ -1,0 +1,116 @@
+version: '2'
+
+networks:
+  lic:
+
+volumes:
+  googlee.ca.com:
+  googlee.couchdb.0.com:
+  googlee.couchdb.1.com:
+  peer0.googlee.com:
+  peer1.googlee.com:
+
+services:
+  googlee.ca.com:
+    container_name: googlee.ca.com 
+    extends:
+      file: org-abstract.yaml
+      service: ca-abstract
+    environment:
+      - FABRIC_CA_SERVER_CA_NAME=googlee-ca-server
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.googlee.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA_GOOGLEE_KEY
+    ports:
+      - "7454:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.googlee.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA_GOOGLEE_KEY -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/googlee.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    networks:
+      - lic
+  
+  googlee.couchdb.0.com:
+    container_name: googlee.couchdb.0.com
+    extends:
+      file: org-abstract.yaml
+      service: couch-abstract
+    ports:
+      - "5484:5984"
+    networks:
+      - lic
+  
+  googlee.couchdb.1.com:
+    container_name: googlee.couchdb.1.com
+    extends:
+      file: org-abstract.yaml
+      service: couch-abstract
+    ports:
+      - "6484:5984"
+    networks:
+      - lic
+
+  peer0.googlee.com:
+    container_name: peer0.googlee.com
+    extends:
+      file: org-abstract.yaml
+      service: peer-abstract
+    environment:
+      - CORE_PEER_ID=peer0.googlee.com
+      - CORE_PEER_ADDRESS=peer0.googlee.com:7451
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:7451
+      - CORE_PEER_CHAINCODEADDRESS=peer0.googlee.com:7452
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:7452
+      #- CORE_PEER_GOSSIP_BOOTSTRAP=peer1.googlee.com:8451
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.googlee.com:7451
+      - CORE_PEER_LOCALMSPID=googleeMSP
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=googlee.couchdb.0.com:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./crypto-config/peerOrganizations/googlee.com/peers/peer0.googlee.com/msp:/etc/hyperledger/fabric/msp
+        - ./crypto-config/peerOrganizations/googlee.com/peers/peer0.googlee.com/tls:/etc/hyperledger/fabric/tls
+        - peer0.googlee.com:/var/hyperledger/production
+    ports:
+      - 7451:7451
+      - 7452:7452
+    depends_on: 
+      - googlee.couchdb.0.com
+    networks:
+      - lic
+
+  peer1.googlee.com:
+    container_name: peer1.googlee.com
+    extends:
+      file: org-abstract.yaml
+      service: peer-abstract
+    environment:
+      - CORE_PEER_ID=peer1.googlee.com
+      - CORE_PEER_ADDRESS=peer1.googlee.com:8451
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:8451
+      - CORE_PEER_CHAINCODEADDRESS=peer1.googlee.com:8452
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:8452
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.googlee.com:8451
+      #- CORE_PEER_GOSSIP_BOOTSTRAP=peer0.googlee.com:7451
+      - CORE_PEER_LOCALMSPID=googleeMSP
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=googlee.couchdb.1.com:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./crypto-config/peerOrganizations/googlee.com/peers/peer1.googlee.com/msp:/etc/hyperledger/fabric/msp
+        - ./crypto-config/peerOrganizations/googlee.com/peers/peer1.googlee.com/tls:/etc/hyperledger/fabric/tls
+        - peer1.googlee.com:/var/hyperledger/production
+    ports:
+      - 8451:8451
+      - 8452:8452
+    networks:
+      - lic
+    depends_on: 
+      - googlee.couchdb.1.com
+
+
+    
+
+
