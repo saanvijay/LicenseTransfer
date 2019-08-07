@@ -17,12 +17,14 @@ services:
       file: org-abstract.yaml
       service: ca-abstract
     environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_TLS_ENABLED=true
       - FABRIC_CA_SERVER_CA_NAME=ibmm-ca-server
       - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.ibmm.com-cert.pem
-      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/2762996d6afd57fa22b201b362318617966ff7ce1c69c3ab0e0efe9dc3a949ac_sk
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/74ffde4e0f54f65a4a26198b838b9282f250d589f7211363506cbe04dc467e05_sk
     ports:
       - "7354:7054"
-    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.ibmm.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/2762996d6afd57fa22b201b362318617966ff7ce1c69c3ab0e0efe9dc3a949ac_sk -b admin:adminpw -d'
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.ibmm.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/74ffde4e0f54f65a4a26198b838b9282f250d589f7211363506cbe04dc467e05_sk -b admin:adminpw -d'
     volumes:
       - ./crypto-config/peerOrganizations/ibmm.com/ca/:/etc/hyperledger/fabric-ca-server-config
     networks:

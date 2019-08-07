@@ -17,6 +17,8 @@ services:
       file: org-abstract.yaml
       service: ca-abstract
     environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_TLS_ENABLED=true
       - FABRIC_CA_SERVER_CA_NAME=microsoftt-ca-server
       - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.microsoftt.com-cert.pem
       - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA_MICROSOFTT_KEY

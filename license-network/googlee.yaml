@@ -17,12 +17,14 @@ services:
       file: org-abstract.yaml
       service: ca-abstract
     environment:
-      - FABRIC_CA_SERVER_CA_NAME=Apple-ca-server
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_CA_NAME=googlee-ca-server
       - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.googlee.com-cert.pem
-      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/a877b5fbbf19accdc90c9949cecd437a76b8708e9cd4438b8bf9e5af63244f63_sk
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/240a7422e6d9bf649c7ecf8657163bfab70ab3bc41a029f26158f2d6e568fa37_sk
     ports:
       - "7454:7054"
-    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.googlee.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/a877b5fbbf19accdc90c9949cecd437a76b8708e9cd4438b8bf9e5af63244f63_sk -b admin:adminpw -d'
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.googlee.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/240a7422e6d9bf649c7ecf8657163bfab70ab3bc41a029f26158f2d6e568fa37_sk -b admin:adminpw -d'
     volumes:
       - ./crypto-config/peerOrganizations/googlee.com/ca/:/etc/hyperledger/fabric-ca-server-config
     networks:

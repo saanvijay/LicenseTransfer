@@ -17,12 +17,14 @@ services:
       file: org-abstract.yaml
       service: ca-abstract
     environment:
-      - FABRIC_CA_SERVER_CA_NAME=Apple-ca-server
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_CA_NAME=oraclee-ca-server
       - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.oraclee.com-cert.pem
-      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/71c808fdd081731d9d6e69a0050c0839f4a4ddefe402074f95cc1007f055c8bf_sk
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/814f6e8ad7c116cebf243b7b092863ef1da66210ab5bbfd29d4b23ca2f1b548c_sk
     ports:
       - "7154:7054"
-    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.oraclee.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/71c808fdd081731d9d6e69a0050c0839f4a4ddefe402074f95cc1007f055c8bf_sk -b admin:adminpw -d'
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.oraclee.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/814f6e8ad7c116cebf243b7b092863ef1da66210ab5bbfd29d4b23ca2f1b548c_sk -b admin:adminpw -d'
     volumes:
       - ./crypto-config/peerOrganizations/oraclee.com/ca/:/etc/hyperledger/fabric-ca-server-config
     networks:
