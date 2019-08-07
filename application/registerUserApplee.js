@@ -42,7 +42,7 @@ Fabric_Client.newDefaultKeyValueStore({ path: store_path
     	verify: false
     };
     // be sure to change the http to https when the CA is running TLS enabled
-    fabric_ca_client = new Fabric_CA_Client('https://localhost:7054', tlsOptions , 'Apple-ca-server', crypto_suite);
+    fabric_ca_client = new Fabric_CA_Client('http://localhost:7054', tlsOptions , 'Apple-ca-server', crypto_suite);
 
     // first check to see if the user1 is already enrolled
     return fabric_client.getUserContext('admin', true);
