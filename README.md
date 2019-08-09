@@ -1,4 +1,4 @@
-# LicTransfer
+# LicenseTransfer
 
 Organizations can generate license as token. They can sell their license for particulr software for particular time period. But it should not be limited with particular machine or ipaddress or person.
 
