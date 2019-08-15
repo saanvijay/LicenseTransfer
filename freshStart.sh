@@ -1,10 +1,11 @@
 #!/bin/bash
 
-#cd license-network
-#./ntUp.sh 
-#cd -
+cd license-network
+./ntUp.sh 
+cd -
 
 cd application
+npm install
 rm -rf key-store-Applee key-store-ibmm key-store-oraclee key-store-googlee key-store-microsoftt
 
 echo

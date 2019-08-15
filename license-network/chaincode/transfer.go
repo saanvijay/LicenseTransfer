@@ -207,7 +207,7 @@ func (l *License) GetAllLicenses(stub shim.ChaincodeStubInterface, args []string
 //	}
 
 	//fetch data from couch db starts here
-	queryString := fmt.Sprintf("{\"selector\":{\"RootLcToken\":{\"$gt\": \"%s\"}}}", "null")
+	queryString := fmt.Sprintf("{\"selector\":{\"RootLcToken\":{\"$ne\": \"%s\"}}}", "null")
 	queryResults, err := getQueryResultForQueryString(stub, queryString)
 	//fetch data from couch db ends here
 	if err != nil {
