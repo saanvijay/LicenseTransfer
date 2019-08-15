@@ -22,7 +22,7 @@ verifyResult() {
 joinChannelWithRetry() {
   PEER=$1
   ORG=$2
-  . .config.core.txt
+  source .config.core.txt
 
   set -x
   peer channel join -b $CHANNEL_NAME.block >&log.txt

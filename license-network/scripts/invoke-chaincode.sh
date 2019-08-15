@@ -1,0 +1,5 @@
+peer chaincode invoke -o orderer.lictransfer.com:7050  --tls --cafile  /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/lictransfer.com/orderers/orderer.lictransfer.com/msp/tlscacerts/tlsca.lictransfer.com-cert.pem  -C "lic-transfer-channel" -n p2p  -c '{ "Args": ["GenerateLicense", "CompanyName", "Applee", "ProductName", "XCode","Validity", "100" ]}' 
+
+peer chaincode invoke -o orderer.lictransfer.com:7050  --tls --cafile  /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/lictransfer.com/orderers/orderer.lictransfer.com/msp/tlscacerts/tlsca.lictransfer.com-cert.pem  -C "lic-transfer-channel" -n p2p -c '{"Args":["GenerateLicense","{\"CompanyName\":\"Applee\",\"ProductName\":\"XCode\",\"Validity\":\"100\"}"]}'
+
+peer chaincode query -o orderer.lictransfer.com:7050  --tls --cafile  /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/lictransfer.com/orderers/orderer.lictransfer.com/msp/tlscacerts/tlsca.lictransfer.com-cert.pem  -C "lic-transfer-channel" -n p2p -c '{"Args":["GetAllLicenses"]}'

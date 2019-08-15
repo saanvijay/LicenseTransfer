@@ -22,15 +22,15 @@ type LcUser struct {
 	UserId                string `json:"UserId"`
 	CompanyName           string `json:"CompanyName"`
 	ProductName           string `json:"ProductName"`
-	Validity              int64  `json:"Validity"`
-	AvailableForShare     bool   `json:"AvailableForShare"`
+	Validity              int64  `json:",string"`
+	AvailableForShare     bool   `json:",string"`
 	Status                string `json:"Status"`
 }
 
 type License struct {
 	RootLcToken           string `json:"RootLcToken"`
-	TotalDaysValidity     int64 `json:"TotalDaysValidity"`
-	NumberOfUsersShared   int64 `json:"NumberOfUsersShared"`
+	TotalDaysValidity     int64 `json:",string"`
+	NumberOfUsersShared   int64 `json:",string"`
 	LastTransaction       string `json:"LastTransaction"`
 	User                  []LcUser `json:"LUser"`
 }
@@ -201,13 +201,13 @@ func (l *License) GetLicense(stub shim.ChaincodeStubInterface, args []string) pb
 func (l *License) GetAllLicenses(stub shim.ChaincodeStubInterface, args []string) pb.Response { 
 	var err error
 
-	if len(args) < 1 {
-		fmt.Println("Invalid number of arguments")
-		return shim.Error(err.Error())
-	}
+//	if len(args) < 1 {
+//		fmt.Println("Invalid number of arguments")
+//		return shim.Error(err.Error())
+//	}
 
 	//fetch data from couch db starts here
-	queryString := fmt.Sprintf("{\"selector\":{\"RootLcToken\":{\"$eq\": \"%s\"}}}", "null")
+	queryString := fmt.Sprintf("{\"selector\":{\"RootLcToken\":{\"$gt\": \"%s\"}}}", "null")
 	queryResults, err := getQueryResultForQueryString(stub, queryString)
 	//fetch data from couch db ends here
 	if err != nil {
@@ -236,16 +236,19 @@ func (l *License) GenerateLicense(stub shim.ChaincodeStubInterface, args []strin
 	var licEntity License
 	var objUser LcUser
 
+        fmt.Printf("licEntity : 1\n")
 	if len(args) < 1 {
 		fmt.Println("Invalid number of arguments")
 		return shim.Error(err.Error())
 	}
 
+        fmt.Printf("licEntity : %s\n", args[0])
 	err = json.Unmarshal([]byte(args[0]), &objUser)
 	if err != nil {
 		fmt.Println("Unable to unmarshal data in GenerateLicense : ", err)
 		return shim.Error(err.Error())
 	}
+        fmt.Printf("licEntity : 3\n")
 
 	// Token Generation
         tokenString := fmt.Sprintf("%s%s%d%s", objUser.ProductName, objUser.CompanyName, objUser.Validity, time.Now().String())
@@ -256,20 +259,23 @@ func (l *License) GenerateLicense(stub shim.ChaincodeStubInterface, args []strin
 		return shim.Error(err.Error())
 	}
     
+        fmt.Printf("licEntity : 4\n")
 	licEntity.RootLcToken = hex.EncodeToString(hash.Sum(nil))
 	objUser.AvailableForShare = true
 	objUser.LcToken = "null"
-	licEntity.User = make([]LcUser, 0)
+	licEntity.User = append(licEntity.User, objUser)
 	licEntity.NumberOfUsersShared = 0
 	licEntity.LastTransaction = time.Now().String()
 
+        fmt.Printf("licEntity : 5\n")
 	// Start - Put into Couch DB
 	JSONBytes, err := json.Marshal(licEntity)
 	if err != nil {
 		fmt.Println("Unable to Marshal GenerateLicense: ", err)
 		return shim.Error(err.Error())
 	}
-    fmt.Printf("licEntity : %v\n", licEntity.RootLcToken)
+        fmt.Printf("licEntity : 6\n")
+        fmt.Printf("licEntity : %v\n", licEntity.RootLcToken)
 	err = stub.PutState(licEntity.RootLcToken, JSONBytes)
 	// End - Put into Couch DB
 	if err != nil {
@@ -277,6 +283,7 @@ func (l *License) GenerateLicense(stub shim.ChaincodeStubInterface, args []strin
 		return shim.Error(err.Error())
 	}
 
+        fmt.Printf("licEntity : 7\n")
 	return shim.Success(nil)
 }
 

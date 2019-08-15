@@ -12,7 +12,7 @@ Organizations:
                 Rule: "OR('OrdererMSP.admin', 'OrdererMSP.peer', 'OrdererMSP.client', 'OrdererMSP.member')"
             Writers:
                 Type: Signature
-                Rule: "OR('OrdererMSP.admin', 'OrdererMSP.client', 'OrdererMSP.member')"
+                Rule: "OR('OrdererMSP.admin', 'OrdererMSP.peer', 'OrdererMSP.client', 'OrdererMSP.member')"
             Admins:
                 Type: Signature
                 Rule: "OR('OrdererMSP.admin')"
@@ -25,10 +25,10 @@ Organizations:
         Policies:
             Readers:
                 Type: Signature
-                Rule: "OR('AppleeMSP.admin', 'AppleeMSP.peer', 'AppleeMSP.client')"
+                Rule: "OR('AppleeMSP.admin', 'AppleeMSP.peer', 'AppleeMSP.client', 'AppleeMSP.member')"
             Writers:
                 Type: Signature
-                Rule: "OR('AppleeMSP.admin', 'AppleeMSP.client')"
+                Rule: "OR('AppleeMSP.admin', 'AppleeMSP.peer', 'AppleeMSP.client', 'AppleeMSP.member')"
             Admins:
                 Type: Signature
                 Rule: "OR('AppleeMSP.admin')"
@@ -44,10 +44,10 @@ Organizations:
         Policies:
             Readers:
                 Type: Signature
-                Rule: "OR('ibmmMSP.admin', 'ibmmMSP.peer', 'ibmmMSP.client')"
+                Rule: "OR('ibmmMSP.admin', 'ibmmMSP.peer', 'ibmmMSP.client', 'ibmmMSP.member')"
             Writers:
                 Type: Signature
-                Rule: "OR('ibmmMSP.admin', 'ibmmMSP.client')"
+                Rule: "OR('ibmmMSP.admin', 'ibmmMSP.peer', 'ibmmMSP.client', 'ibmmMSP.member')"
             Admins:
                 Type: Signature
                 Rule: "OR('ibmmMSP.admin')"
@@ -63,10 +63,10 @@ Organizations:
         Policies:
             Readers:
                 Type: Signature
-                Rule: "OR('oracleeMSP.admin', 'oracleeMSP.peer', 'oracleeMSP.client')"
+                Rule: "OR('oracleeMSP.admin', 'oracleeMSP.peer', 'oracleeMSP.client', 'oracleeMSP.member')"
             Writers:
                 Type: Signature
-                Rule: "OR('oracleeMSP.admin', 'oracleeMSP.client')"
+                Rule: "OR('oracleeMSP.admin', 'oracleeMSP.peer', 'oracleeMSP.client', 'oracleeMSP.member')"
             Admins:
                 Type: Signature
                 Rule: "OR('oracleeMSP.admin')"
@@ -82,10 +82,10 @@ Organizations:
         Policies:
             Readers:
                 Type: Signature
-                Rule: "OR('microsofttMSP.admin', 'microsofttMSP.peer', 'microsofttMSP.client')"
+                Rule: "OR('microsofttMSP.admin', 'microsofttMSP.peer', 'microsofttMSP.client', 'microsofttMSP.member')"
             Writers:
                 Type: Signature
-                Rule: "OR('microsofttMSP.admin', 'microsofttMSP.client')"
+                Rule: "OR('microsofttMSP.admin', 'microsofttMSP.peer', 'microsofttMSP.client', 'microsofttMSP.member')"
             Admins:
                 Type: Signature
                 Rule: "OR('microsofttMSP.admin')"
@@ -101,10 +101,10 @@ Organizations:
         Policies:
             Readers:
                 Type: Signature
-                Rule: "OR('googleeMSP.admin', 'googleeMSP.peer', 'googleeMSP.client')"
+                Rule: "OR('googleeMSP.admin', 'googleeMSP.peer', 'googleeMSP.client', 'googleeMSP.member')"
             Writers:
                 Type: Signature
-                Rule: "OR('googleeMSP.admin', 'googleeMSP.client')"
+                Rule: "OR('googleeMSP.admin', 'googleeMSP.peer', 'googleeMSP.client', 'googleeMSP.member')"
             Admins:
                 Type: Signature
                 Rule: "OR('googleeMSP.admin')"

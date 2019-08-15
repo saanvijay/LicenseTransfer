@@ -5,8 +5,6 @@ OrdererOrgs:
     Domain: lictransfer.com
     Specs:
       - Hostname: orderer
-      - Hostname: orderer2
-      - Hostname: orderer3
 
 PeerOrgs:
   - Name: Applee 

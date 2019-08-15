@@ -3,7 +3,7 @@
 export FABRIC_CFG_PATH=/etc/hyperledger/fabric
 echo $FABRIC_CFG_PATH
 
-CC_NAME=c2c
+CC_NAME=p2p
 VER=1
 CHANNEL_NAME=lic-transfer-channel
 
@@ -13,7 +13,10 @@ echo "========== Instantiating chaincode v$VER =========="
 peer chaincode instantiate -o orderer.lictransfer.com:7050  \
                            --tls $CORE_PEER_TLS_ENABLED     \
                            --cafile $ORDERER_CA             \
-                           -C $CHANNEL_NAME -n $CC_NAME     \
-                           -c '{"Args": ["Init"]}' -v $VER  \
-                           -P "OR ('AppleeMSP.peer','ibmmMSP.peer', 'oraclee.peer', 'microsofttMSP.peer','googleeMSP.peer')"
+                           -C $CHANNEL_NAME                 \
+                           -n $CC_NAME                      \
+                           -c '{"Args": ["Init"]}'          \
+                           -v $VER                          \
+			   -l golang                        \
+                           -P "OR ('AppleeMSP.member', 'ibmmMSP.member', 'oracleeMSP.member', 'microsofttMSP.member', 'googleeMSP.member')"
 

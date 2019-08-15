@@ -75,7 +75,6 @@ services:
         - peer0.ibmm.com:/var/hyperledger/production
     ports:
       - 7351:7351
-      - 7352:7352
     depends_on: 
       - ibmm.couchdb.0.com
     networks:
@@ -106,7 +105,6 @@ services:
         - peer1.ibmm.com:/var/hyperledger/production
     ports:
       - 8351:8351
-      - 8352:8352
     networks:
       - lic
     depends_on: 

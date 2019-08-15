@@ -22,7 +22,8 @@ return{
 		// setup the fabric network
                 let serverCert = fs.readFileSync('../license-network/crypto-config/peerOrganizations/Applee.com/msp/tlscacerts/tlsca.Applee.com-cert.pem');
 		var channel = fabric_client.newChannel('lic-transfer-channel');
-		var peer = fabric_client.newPeer('grpc://localhost:7051',{'pem': Buffer.from(serverCert).toString(),'ssl-target-name-override': 'peer0.Applee.com'});
+		//var peer = fabric_client.newPeer('grpc://localhost:7051',{'pem': Buffer.from(serverCert).toString(),'ssl-target-name-override': 'peer0.Applee.com'});
+		var peer = fabric_client.newPeer('grpc://localhost:7051');
 		channel.addPeer(peer);
 
 		//
@@ -55,7 +56,7 @@ return{
 
 		// Get all Overall planning
 		    const request = {
-		        chaincodeId: 'c2c',
+		        chaincodeId: 'p2p',
                         channel_id: 'lic-transfer-channel',
 		        txId: tx_id,
 		        fcn: 'GetAllLicenses',
@@ -92,10 +93,11 @@ return{
                 let peerCert = fs.readFileSync('../license-network/crypto-config/peerOrganizations/Applee.com/msp/tlscacerts/tlsca.Applee.com-cert.pem');
                 let ordererCert = fs.readFileSync('../license-network/crypto-config/ordererOrganizations/lictransfer.com/tlsca/tlsca.lictransfer.com-cert.pem');
 		var channel = fabric_client.newChannel('lic-transfer-channel');
-		var peer = fabric_client.newPeer('grpc://localhost:7051',{'pem': Buffer.from(peerCert).toString(),'ssl-target-name-override': 'peer0.Applee.com'});
+		//var peer = fabric_client.newPeer('grpc://localhost:7051',{'pem': Buffer.from(peerCert).toString(),'ssl-target-name-override': 'peer0.Applee.com'});
+		//var orderer = fabric_client.newOrderer('grpc://localhost:7050',{'pem':Buffer.from(ordererCert).toString(),'ssl-target-name-override': 'orderer.lictransfer.com'})
+		var peer = fabric_client.newPeer('grpc://localhost:7051');
 		channel.addPeer(peer);
-		var orderer = fabric_client.newOrderer('grpc://localhost:7050',{'pem':Buffer.from(ordererCert).toString(),'ssl-target-name-override': 'orderer.lictransfer.com'})
-		channel.addOrderer(orderer);
+		var orderer = fabric_client.newOrderer('grpc://localhost:7050');
 
 		var member_user = null;
                 var store_path = path.join(__dirname, 'key-store-Applee');
@@ -115,7 +117,7 @@ return{
 		    fabric_client.setCryptoSuite(crypto_suite);
 
 		    // get the enrolled user from persistence, this user will sign all requests
-		    return  fabric_client.getUserContext('admin', true);
+		    return  fabric_client.getUserContext('user1', true);
 		}).then((user_from_store) => {
 		    if (user_from_store && user_from_store.isEnrolled()) {
 		        console.log('successfully loaded user1 from persistence');
@@ -131,7 +133,7 @@ return{
 		    // send proposal to endorser
 		    const request = {
 		        //targets : --- letting this default to the peers assigned to the channel
-		        chaincodeId: 'c2c',
+		        chaincodeId: 'p2p',
                         chainId: 'lic-transfer-channel',
 		        txId: tx_id,
 		        fcn: 'GenerateLicense',
@@ -174,7 +176,7 @@ return{
 		        // is required bacause the event registration must be signed
 		        //let event_hub = fabric_client.newEventHub();
 		        let event_hub = channel.newChannelEventHub(peer);
-		        //event_hub.setPeerAddr('grpcs://localhost:7053');
+		        event_hub.setPeerAddr('grpc://localhost:7053');
                         headerStatus = proposalResponses[0].response.payload; 
 		        console.log("headerStatus %s",headerStatus);
 
@@ -237,8 +239,8 @@ return{
                         console.log(results)
 		    }
 		}).catch((err) => {
-		    //console.error('Failed to invoke successfully :: ' + err);
-		    //res.send("Error: no record found");
+		    console.error('Failed to invoke successfully :: ' + err);
+		    res.send("Error: no record found");
 		});
 
 	}

@@ -75,7 +75,6 @@ services:
         - peer0.Applee.com:/var/hyperledger/production
     ports:
       - 7051:7051
-      - 7052:7052
     depends_on: 
       - Applee.couchdb.0.com
     networks:
@@ -106,7 +105,6 @@ services:
         - peer1.Applee.com:/var/hyperledger/production
     ports:
       - 8051:8051
-      - 8052:8052
     networks:
       - lic
     depends_on: 

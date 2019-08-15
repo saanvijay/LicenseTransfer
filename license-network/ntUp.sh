@@ -3,7 +3,9 @@ export IMAGE_TAG=latest
 export PATH=${PWD}/../bin:${PWD}:$PATH
 
 rm -rf crypto-config
+echo "=========================== Generate Certificates ============================="
 cryptogen generate --config=./crypto-config.yaml
+echo "=========================== DONE ============================="
 
 for Org  in Applee googlee microsoftt oraclee ibmm ;
 do
@@ -14,7 +16,6 @@ ARCH=$(uname -s | grep Darwin)
 if [ "$ARCH" == "Darwin" ]; then
   OPTS="-it"
   rm -rf *.yamlt
-echo $OPTS
 else
   OPTS="-i"
 fi
@@ -63,7 +64,7 @@ rm -rf channel-artifacts
 
 mkdir channel-artifacts
 
-configtxgen -profile FiveOrgsOrdererGenesis -outputBlock ./channel-artifacts/genesis.block
+configtxgen -profile FiveOrgsOrdererGenesis -outputBlock ./channel-artifacts/genesis.block 
 configtxgen -profile FiveOrgsChannel -outputCreateChannelTx ./channel-artifacts/channel.tx -channelID lic-transfer-channel 
 
 configtxgen -profile FiveOrgsChannel -outputAnchorPeersUpdate ./channel-artifacts/AppleeMSPanchors.tx -channelID  lic-transfer-channel -asOrg AppleeMSP
