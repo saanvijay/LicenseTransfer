@@ -86,17 +86,19 @@ return{
 		console.log("Generate License...: ");
 
 
-                var jsonargs = JSON.stringify(req.body.jsonblob);
+        var jsonargs = JSON.stringify(req.body.jsonblob);
 		var fabric_client = new Fabric_Client();
 
 		// setup the fabric network
-                let peerCert = fs.readFileSync('../license-network/crypto-config/peerOrganizations/Applee.com/msp/tlscacerts/tlsca.Applee.com-cert.pem');
-                let ordererCert = fs.readFileSync('../license-network/crypto-config/ordererOrganizations/lictransfer.com/tlsca/tlsca.lictransfer.com-cert.pem');
+        let peerCert = fs.readFileSync('../license-network/crypto-config/peerOrganizations/Applee.com/msp/tlscacerts/tlsca.Applee.com-cert.pem');
+        let ordererCert = fs.readFileSync('../license-network/crypto-config/ordererOrganizations/lictransfer.com/tlsca/tlsca.lictransfer.com-cert.pem');
 		var channel = fabric_client.newChannel('lic-transfer-channel');
 		var peer = fabric_client.newPeer('grpcs://localhost:7051',{'pem': Buffer.from(peerCert).toString(),'ssl-target-name-override': 'peer0.Applee.com'});
 		var orderer = fabric_client.newOrderer('grpcs://localhost:7050',{'pem':Buffer.from(ordererCert).toString(),'ssl-target-name-override': 'orderer.lictransfer.com'})
 		//var peer = fabric_client.newPeer('grpc://localhost:7051');
 		channel.addPeer(peer);
+		channel.addOrderer(orderer);
+
 		//var orderer = fabric_client.newOrderer('grpc://localhost:7050');
 
 		var member_user = null;
@@ -175,7 +177,7 @@ return{
 		        // get an eventhub once the fabric client has a user assigned. The user
 		        // is required bacause the event registration must be signed
 		        //let event_hub = fabric_client.newEventHub();
-		        let event_hub = channel.newChannelEventHub(peer);
+		        let event_hub = channel.newChannelEventHub('localhost:7051');
 		        //event_hub.setPeerAddr('grpcs://localhost:7053');
                         headerStatus = proposalResponses[0].response.payload; 
 		        console.log("headerStatus %s",headerStatus);
@@ -228,7 +230,7 @@ return{
 		        res.json(tx_id.getTransactionID())
 		    } else {
 		        console.error('Failed to order the transaction. Error code: ' + response.status);
-		        //res.send("Error: no record found");
+		        res.send("Error: no record found");
 		    }
 
 		    if(results && results[1] && results[1].event_status === 'VALID') {
