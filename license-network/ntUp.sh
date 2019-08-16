@@ -64,6 +64,9 @@ rm -rf channel-artifacts
 
 mkdir channel-artifacts
 
+echo""
+echo "=========================== Creating channel artifacts ============================="
+echo""
 configtxgen -profile FiveOrgsOrdererGenesis -outputBlock ./channel-artifacts/genesis.block 
 configtxgen -profile FiveOrgsChannel -outputCreateChannelTx ./channel-artifacts/channel.tx -channelID lic-transfer-channel 
 
@@ -72,6 +75,8 @@ configtxgen -profile FiveOrgsChannel -outputAnchorPeersUpdate ./channel-artifact
 configtxgen -profile FiveOrgsChannel -outputAnchorPeersUpdate ./channel-artifacts/ibmmMSPanchors.tx -channelID  lic-transfer-channel -asOrg ibmmMSP
 configtxgen -profile FiveOrgsChannel -outputAnchorPeersUpdate ./channel-artifacts/microsofttMSPanchors.tx -channelID  lic-transfer-channel -asOrg microsofttMSP
 configtxgen -profile FiveOrgsChannel -outputAnchorPeersUpdate ./channel-artifacts/oracleeMSPanchors.tx -channelID  lic-transfer-channel -asOrg oracleeMSP
+echo "=========================== DONE ============================="
+echo""
 
 echo "=========================== Bringup Network ============================="
 docker-compose -f Applee.yaml -f googlee.yaml -f microsoftt.yaml -f oraclee.yaml -f ibmm.yaml -f common.yaml up -d

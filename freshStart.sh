@@ -5,6 +5,9 @@ cd license-network
 cd -
 
 cd application
+echo
+echo -e "\e[1;32m ========= Install node Modules =========== \e[0m"
+echo
 npm install
 rm -rf key-store-Applee key-store-ibmm key-store-oraclee key-store-googlee key-store-microsoftt
 
