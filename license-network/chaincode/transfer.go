@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"time"
 	"io"
+        "strconv"
 	"crypto/sha256"
 	"encoding/json"
 	"encoding/hex"
@@ -236,19 +237,16 @@ func (l *License) GenerateLicense(stub shim.ChaincodeStubInterface, args []strin
 	var licEntity License
 	var objUser LcUser
 
-        fmt.Printf("licEntity : 1\n")
 	if len(args) < 1 {
 		fmt.Println("Invalid number of arguments")
 		return shim.Error(err.Error())
 	}
 
-        fmt.Printf("licEntity : %s\n", args[0])
 	err = json.Unmarshal([]byte(args[0]), &objUser)
 	if err != nil {
 		fmt.Println("Unable to unmarshal data in GenerateLicense : ", err)
 		return shim.Error(err.Error())
 	}
-        fmt.Printf("licEntity : 3\n")
 
 	// Token Generation
         tokenString := fmt.Sprintf("%s%s%d%s", objUser.ProductName, objUser.CompanyName, objUser.Validity, time.Now().String())
@@ -259,22 +257,23 @@ func (l *License) GenerateLicense(stub shim.ChaincodeStubInterface, args []strin
 		return shim.Error(err.Error())
 	}
     
-        fmt.Printf("licEntity : 4\n")
 	licEntity.RootLcToken = hex.EncodeToString(hash.Sum(nil))
 	objUser.AvailableForShare = true
 	objUser.LcToken = "null"
-	licEntity.User = append(licEntity.User, objUser)
+	objUser.Status  = "generated"
+	objUser.UserId  = "producer"
+	licEntity.User  = append(licEntity.User, objUser)
 	licEntity.NumberOfUsersShared = 0
+	licEntity.TotalDaysValidity = strconv.Atoi(objUser.Validity)
 	licEntity.LastTransaction = time.Now().String()
 
-        fmt.Printf("licEntity : 5\n")
+
 	// Start - Put into Couch DB
 	JSONBytes, err := json.Marshal(licEntity)
 	if err != nil {
 		fmt.Println("Unable to Marshal GenerateLicense: ", err)
 		return shim.Error(err.Error())
 	}
-        fmt.Printf("licEntity : 6\n")
         fmt.Printf("licEntity : %v\n", licEntity.RootLcToken)
 	err = stub.PutState(licEntity.RootLcToken, JSONBytes)
 	// End - Put into Couch DB
@@ -283,7 +282,6 @@ func (l *License) GenerateLicense(stub shim.ChaincodeStubInterface, args []strin
 		return shim.Error(err.Error())
 	}
 
-        fmt.Printf("licEntity : 7\n")
 	return shim.Success(nil)
 }
 
