@@ -1,9 +1,9 @@
 #!/bin/bash
 
-#export FABRIC_CFG_PATH=/etc/hyperledger/fabric
-#echo $FABRIC_CFG_PATH
+export FABRIC_CFG_PATH=/etc/hyperledger/fabric
+echo $FABRIC_CFG_PATH
 
-CC_NAME=c2c
+CC_NAME=p2p
 VER=2
 CHANNEL_NAME=lic-transfer-channel
 
@@ -15,5 +15,5 @@ peer chaincode upgrade -o orderer.lictransfer.com:7050  \
                            --cafile $ORDERER_CA             \
                            -C $CHANNEL_NAME -n $CC_NAME     \
                            -c '{"Args": ["Init"]}' -v $VER  \
-                           -P "OR ('AppleeMSP.peer','ibmmMSP.peer', 'oraclee.peer', 'microsofttMSP.peer','googleeMSP.peer')"
+                           -P "OR ('AppleeMSP.member', 'ibmmMSP.member', 'oracleeMSP.member', 'microsofttMSP.member', 'googleeMSP.member')"
 
