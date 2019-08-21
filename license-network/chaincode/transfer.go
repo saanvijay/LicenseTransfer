@@ -130,25 +130,26 @@ func (l *License) ShareLicense(stub shim.ChaincodeStubInterface, args []string) 
     
 		destLicense.User[index].LcToken = hex.EncodeToString(hash.Sum(nil))
     
-		// Start - Put into Couch DB
-		JSONBytes, err := json.Marshal(destLicense)
-		if err != nil {
-			fmt.Println("Unable to Marshal ShareLicense: ", err)
-			return shim.Error(err.Error())
-		}
-
-    	fmt.Printf("LcToken : %v\n", destLicense.RootLcToken)
-		err = stub.PutState(destLicense.RootLcToken, JSONBytes)
-
-		// End - Put into Couch DB
-		if err != nil {
-			fmt.Println("Unable to make transaction for UpdateLicense: ", err)
-			return shim.Error(err.Error())
-		}
 		// Sharing is successful, hence reduce the total validity
 		destLicense.TotalDaysValidity -= destLicense.User[index].Validity
 	} else {
 		destLicense.User[index].Status = "rejected"
+	}
+
+	// Start - Put into Couch DB
+	JSONBytes, err := json.Marshal(destLicense)
+	if err != nil {
+		fmt.Println("Unable to Marshal ShareLicense: ", err)
+		return shim.Error(err.Error())
+	}
+
+	fmt.Printf("LcToken : %v\n", destLicense.RootLcToken)
+	err = stub.PutState(destLicense.RootLcToken, JSONBytes)
+
+	// End - Put into Couch DB
+	if err != nil {
+		fmt.Println("Unable to make transaction for UpdateLicense: ", err)
+		return shim.Error(err.Error())
 	}
 
 	return shim.Success(nil)
@@ -156,7 +157,7 @@ func (l *License) ShareLicense(stub shim.ChaincodeStubInterface, args []string) 
 
 func (l *License) RequestLicense(stub shim.ChaincodeStubInterface, args []string) pb.Response { 
 	var err, err1 error
-	var licEntity License
+	var oldLicEntity License
 	var objUser LcUser
 	var RootToken string
 
@@ -177,19 +178,27 @@ func (l *License) RequestLicense(stub shim.ChaincodeStubInterface, args []string
 		return shim.Error(err.Error())
 	}
     
+	var bytesread []byte
+	bytesread, err = stub.GetState(RootToken)
+	err = json.Unmarshal(bytesread, &oldLicEntity)
+	if err != nil {
+		fmt.Println("Unable to unmarshal data in RequestLicense: ", err)
+		return shim.Error(err.Error())
+	}
+
 	objUser.LcToken = "null"
 	objUser.Status  = "requested"
-	licEntity.RootLcToken = RootToken
-	licEntity.User  = append(licEntity.User, objUser)
+	//oldLicEntity.RootLcToken = RootToken
+	oldLicEntity.User  = append(oldLicEntity.User, objUser)
 
 	// Start - Put into Couch DB
-	JSONBytes, err := json.Marshal(licEntity)
+	JSONBytes, err := json.Marshal(oldLicEntity)
 	if err != nil {
 		fmt.Println("Unable to Marshal RequestLicense: ", err)
 		return shim.Error(err.Error())
 	}
      
-	err = stub.PutState(licEntity.RootLcToken, JSONBytes)
+	err = stub.PutState(oldLicEntity.RootLcToken, JSONBytes)
 	// End - Put into Couch DB
 	if err != nil {
 		fmt.Println("Unable to make transaction for RequestLicense: ", err)
