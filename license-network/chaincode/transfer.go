@@ -113,8 +113,8 @@ func (l *License) ShareLicense(stub shim.ChaincodeStubInterface, args []string) 
 			break
 		}
 	}
-
-	if destLicense.TotalDaysValidity <= destLicense.User[index].Validity {
+	fmt.Printf("chaincode destLicense.TotalDaysValidity=%v destLicense.User[%v].Validity=%v", destLicense.TotalDaysValidity, index, destLicense.User[index].Validity)
+	if destLicense.TotalDaysValidity >= destLicense.User[index].Validity {
 		destLicense.LastTransaction = time.Now().String()
 		destLicense.User[index].AvailableForShare = true
 		destLicense.User[index].Status = "shared"
@@ -132,6 +132,7 @@ func (l *License) ShareLicense(stub shim.ChaincodeStubInterface, args []string) 
     
 		// Sharing is successful, hence reduce the total validity
 		destLicense.TotalDaysValidity -= destLicense.User[index].Validity
+		destLicense.NumberOfUsersShared += 1
 	} else {
 		destLicense.User[index].Status = "rejected"
 	}
