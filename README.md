@@ -6,6 +6,17 @@ License transfer (LicenseTransfer) is a token based license model. Any organizat
 
 Since the tokens are stored in blockchain, the end user can't pirate/mis-use the tokens. Moreover at any point of time the license provider can track the token like who is using the license.
 
+# Postman Results
+
+![alt text](https://github.com/saanvijay/LicenseTransfer/blob/master/Images/Screenshot%202019-08-22%20at%2011.23.17%20PM.png)
+
+![alt text](https://github.com/saanvijay/LicenseTransfer/blob/master/Images/Screenshot%202019-08-22%20at%2011.24.04%20PM.png)
+
+![alt text](https://github.com/saanvijay/LicenseTransfer/blob/master/Images/Screenshot%202019-08-22%20at%2011.24.21%20PM.png)
+
+![alt text](https://github.com/saanvijay/LicenseTransfer/blob/master/Images/Screenshot%202019-08-22%20at%2011.24.34%20PM.png)
+
+
 ## License
 
 This sample is licensed under the terms of the [MIT License](http://opensource.org/licenses/MIT). Please see the [LICENSE](LICENSE) file for full details.
