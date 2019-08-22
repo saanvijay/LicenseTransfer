@@ -8,14 +8,13 @@ Since the tokens are stored in blockchain, the end user can't pirate/mis-use the
 
 # Postman Results
 
-![alt text](https://github.com/saanvijay/LicenseTransfer/blob/master/Images/Screenshot%202019-08-22%20at%2011.23.17%20PM.png)
+![alt text](https://github.com/saanvijay/LicenseTransfer/blob/master/Images/Screenshot%202019-08-22%20at%2011.47.08%20PM.png)
 
-![alt text](https://github.com/saanvijay/LicenseTransfer/blob/master/Images/Screenshot%202019-08-22%20at%2011.24.04%20PM.png)
+![alt text](https://github.com/saanvijay/LicenseTransfer/blob/master/Images/Screenshot%202019-08-22%20at%2011.47.29%20PM.png)
 
-![alt text](https://github.com/saanvijay/LicenseTransfer/blob/master/Images/Screenshot%202019-08-22%20at%2011.24.21%20PM.png)
+![alt text](https://github.com/saanvijay/LicenseTransfer/blob/master/Images/Screenshot%202019-08-22%20at%2011.47.40%20PM.png)
 
-![alt text](https://github.com/saanvijay/LicenseTransfer/blob/master/Images/Screenshot%202019-08-22%20at%2011.24.34%20PM.png)
-
+![alt text](https://github.com/saanvijay/LicenseTransfer/blob/master/Images/Screenshot%202019-08-22%20at%2011.47.51%20PM.png)
 
 ## License
 
