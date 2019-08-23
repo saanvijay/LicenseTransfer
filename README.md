@@ -4,6 +4,8 @@ Organizations can generate license as token. They can sell their license for par
 
 License transfer (LicenseTransfer) is a token based license model. Any organization or any individul person can buy/sell license token. For example my license token valid for 100 days, but I want to use it only for 50 days then I can sell my license token to others for 50 days. Same way other person can sell/buy license toekn for n days.
 
+Let's say you have software with License key on it, but you never used it or you used it for n number of days, now you want to transfer the pending days to others then you register your companyName, productName, LicenseKey, Validity in "LicenseTransfer" Blockchain Application, so that you can transfer license and other can utilize it.
+
 Since the tokens are stored in blockchain, the end user can't pirate/mis-use the tokens. Moreover at any point of time the license provider can track the token like who is using the license.
 
 # Postman Results
