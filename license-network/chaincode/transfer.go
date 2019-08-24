@@ -104,8 +104,8 @@ func (l *License) ShareLicense(stub shim.ChaincodeStubInterface, args []string) 
 	}
 
 	SourceUserId = "producer"
-	sindex = -1
-	dindex = -1
+	sindex = 0
+	dindex = 0
 	UserToUser = false
 
 	if len(args) == 3 {
@@ -129,26 +129,21 @@ func (l *License) ShareLicense(stub shim.ChaincodeStubInterface, args []string) 
 	}
 
 	for index1, user := range destLicense.User {
-		if UserToUser == false {
 			if user.UserId == UserId {
 				dindex = index1
-				break
+				//break
 			}
-		} else {
-			if user.UserId == UserId {
-				dindex = index1
-			}
+
 			if user.SourceUserId == SourceUserId {
 				sindex = index1
 			}
 			// if we get both index then come out of loop
-			if sindex >= 0 && dindex >= 0 {
-				break
-			} 
-		}
+			//if UserToUser == true && sindex != -1 && dindex != -1 {
+			//	break
+			//} 
 	}
-	//fmt.Printf("chaincode destLicense.TotalDaysValidity=%v destLicense.User[%v].Validity=%v", destLicense.TotalDaysValidity, index, destLicense.User[index].Validity)
-	if destLicense.TotalDaysValidity >= destLicense.User[dindex].Validity || destLicense.User[sindex].Validity >= destLicense.User[dindex].Validity {
+	fmt.Printf("chaincode ShareLicese sindex=%v dindex=%v", sindex, dindex)
+	if destLicense.TotalDaysValidity >= destLicense.User[dindex].Validity  {
 		destLicense.LastTransaction = time.Now().String()
 		destLicense.User[dindex].AvailableForShare = true
 		destLicense.User[dindex].Status = "shared"
@@ -169,7 +164,7 @@ func (l *License) ShareLicense(stub shim.ChaincodeStubInterface, args []string) 
 			destLicense.User[sindex].Validity -= destLicense.User[dindex].Validity 
 		} else {
 			destLicense.TotalDaysValidity -= destLicense.User[dindex].Validity
-			destLicense.User[sindex].SourceUserId = "producer"
+			destLicense.User[dindex].SourceUserId = "producer"
 		}
 		destLicense.NumberOfUsersShared += 1
 	} else {
