@@ -25,6 +25,8 @@ type LcUser struct {
 	Validity              int  `json:",string"`
 	AvailableForShare     bool   `json:",string"`
 	Status                string `json:"Status"`
+	SourceUserId          string `json:SourceUserId`
+	//DestUserId            string `json:TransferUser`
 }
 
 type License struct {
@@ -80,7 +82,9 @@ func (l *License) ShareLicense(stub shim.ChaincodeStubInterface, args []string) 
 	var destLicense License
 	var RootToken string
 	var UserId string
-	var index int 
+	var SourceUserId string
+	var sindex,dindex int 
+	var UserToUser bool
 
 	if len(args) < 1 {
 		fmt.Println("Invalid number of arguments")
@@ -99,6 +103,23 @@ func (l *License) ShareLicense(stub shim.ChaincodeStubInterface, args []string) 
 		return shim.Error(err.Error())
 	}
 
+	SourceUserId = "producer"
+	sindex = -1
+	dindex = -1
+	UserToUser = false
+
+	if len(args) == 3 {
+		var err2 error
+		err2 = json.Unmarshal([]byte(args[2]), &SourceUserId)
+		if err2 != nil {
+			fmt.Println("Unable to unmarshal data in ShareLicense : ", err2)
+			return shim.Error(err.Error())
+		}
+		if SourceUserId != "producer" {
+			UserToUser = true
+		}
+	}
+
     var bytesread []byte
 	bytesread, err = stub.GetState(RootToken)
 	err = json.Unmarshal(bytesread, &destLicense)
@@ -108,19 +129,32 @@ func (l *License) ShareLicense(stub shim.ChaincodeStubInterface, args []string) 
 	}
 
 	for index1, user := range destLicense.User {
-		if user.UserId == UserId {
-			index = index1
-			break
+		if UserToUser == false {
+			if user.UserId == UserId {
+				dindex = index1
+				break
+			}
+		} else {
+			if user.UserId == UserId {
+				dindex = index1
+			}
+			if user.SourceUserId == SourceUserId {
+				sindex = index1
+			}
+			// if we get both index then come out of loop
+			if sindex >= 0 && dindex >= 0 {
+				break
+			} 
 		}
 	}
-	fmt.Printf("chaincode destLicense.TotalDaysValidity=%v destLicense.User[%v].Validity=%v", destLicense.TotalDaysValidity, index, destLicense.User[index].Validity)
-	if destLicense.TotalDaysValidity >= destLicense.User[index].Validity {
+	//fmt.Printf("chaincode destLicense.TotalDaysValidity=%v destLicense.User[%v].Validity=%v", destLicense.TotalDaysValidity, index, destLicense.User[index].Validity)
+	if destLicense.TotalDaysValidity >= destLicense.User[dindex].Validity || destLicense.User[sindex].Validity >= destLicense.User[dindex].Validity {
 		destLicense.LastTransaction = time.Now().String()
-		destLicense.User[index].AvailableForShare = true
-		destLicense.User[index].Status = "shared"
+		destLicense.User[dindex].AvailableForShare = true
+		destLicense.User[dindex].Status = "shared"
 	
 		//Generate Token for shared License
-    	tokenString := fmt.Sprintf("%s%s%d%s", destLicense.User[index].ProductName, destLicense.User[index].CompanyName, destLicense.User[index].Validity, time.Now().String())
+    	tokenString := fmt.Sprintf("%s%s%d%s", destLicense.User[dindex].ProductName, destLicense.User[dindex].CompanyName, destLicense.User[dindex].Validity, time.Now().String())
 		input := strings.NewReader(tokenString)
 		hash := sha256.New()
 		if _, err := io.Copy(hash, input); err != nil {
@@ -128,13 +162,18 @@ func (l *License) ShareLicense(stub shim.ChaincodeStubInterface, args []string) 
 			return shim.Error(err.Error())
 		}
     
-		destLicense.User[index].LcToken = hex.EncodeToString(hash.Sum(nil))
+		destLicense.User[dindex].LcToken = hex.EncodeToString(hash.Sum(nil))
     
 		// Sharing is successful, hence reduce the total validity
-		destLicense.TotalDaysValidity -= destLicense.User[index].Validity
+		if UserToUser == true {
+			destLicense.User[sindex].Validity -= destLicense.User[dindex].Validity 
+		} else {
+			destLicense.TotalDaysValidity -= destLicense.User[dindex].Validity
+			destLicense.User[sindex].SourceUserId = "producer"
+		}
 		destLicense.NumberOfUsersShared += 1
 	} else {
-		destLicense.User[index].Status = "rejected"
+		destLicense.User[dindex].Status = "rejected"
 	}
 
 	// Start - Put into Couch DB
