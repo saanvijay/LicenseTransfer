@@ -134,7 +134,7 @@ func (l *License) ShareLicense(stub shim.ChaincodeStubInterface, args []string) 
 				//break
 			}
 
-			if user.SourceUserId == SourceUserId {
+			if user.UserId == SourceUserId {
 				sindex = index1
 			}
 			// if we get both index then come out of loop
@@ -161,6 +161,7 @@ func (l *License) ShareLicense(stub shim.ChaincodeStubInterface, args []string) 
     
 		// Sharing is successful, hence reduce the total validity
 		if UserToUser == true {
+			fmt.Printf("chaincode ShareLicese destLicense.User[%v].Validity=%v destLicense.User[%v].Validityx=%v", sindex, destLicense.User[sindex].Validity, dindex, destLicense.User[dindex].Validity)
 			destLicense.User[sindex].Validity -= destLicense.User[dindex].Validity 
 		} else {
 			destLicense.TotalDaysValidity -= destLicense.User[dindex].Validity
