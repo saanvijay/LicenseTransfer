@@ -26,7 +26,8 @@ type LcUser struct {
 	AvailableForShare     bool   `json:",string"`
 	Status                string `json:"Status"`
 	SourceUserId          string `json:SourceUserId`
-	//DestUserId            string `json:TransferUser`
+	SourceUserLcToken     string `json:SourceUserLcToken`
+	IsValidLicense        bool   `json:",string"`
 }
 
 type License struct {
@@ -76,6 +77,20 @@ func (l *License) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	return shim.Error("Recieved unknown function invocation!")
 }
 
+func GenerateToken(ProductName string, CompanyName string, Validity int) string {
+	//var err error
+	
+	//Generate Token for shared License
+	tokenString := fmt.Sprintf("%s%s%d%s", ProductName, CompanyName, Validity, time.Now().String())
+	input := strings.NewReader(tokenString)
+	hash := sha256.New()
+	if _, err := io.Copy(hash, input); err != nil {
+		fmt.Println("Unable to Generate Token in GenerateLicense : ", err)
+		return string(err.Error())
+	}
+
+	return hex.EncodeToString(hash.Sum(nil))
+}
 
 func (l *License) ShareLicense(stub shim.ChaincodeStubInterface, args []string) pb.Response { 
 	var err, err1 error
@@ -85,6 +100,7 @@ func (l *License) ShareLicense(stub shim.ChaincodeStubInterface, args []string) 
 	var SourceUserId string
 	var sindex,dindex int 
 	var UserToUser bool
+	var LcToken, SourceUserLcToken string
 
 	if len(args) < 1 {
 		fmt.Println("Invalid number of arguments")
@@ -108,18 +124,31 @@ func (l *License) ShareLicense(stub shim.ChaincodeStubInterface, args []string) 
 	dindex = 0
 	UserToUser = false
 
-	if len(args) == 3 {
-		var err2 error
-		err2 = json.Unmarshal([]byte(args[2]), &SourceUserId)
-		if err2 != nil {
-			fmt.Println("Unable to unmarshal data in ShareLicense : ", err2)
-			return shim.Error(err.Error())
-		}
-		if SourceUserId != "producer" {
-			UserToUser = true
-		}
+	var err2 error
+	err2 = json.Unmarshal([]byte(args[2]), &SourceUserId)
+	if err2 != nil {
+		fmt.Println("Unable to unmarshal data in ShareLicense : ", err2)
+		return shim.Error(err.Error())
 	}
 
+	var err3 error
+	err3 = json.Unmarshal([]byte(args[3]), &LcToken)
+	if err3 != nil {
+		fmt.Println("Unable to unmarshal data in ShareLicense : ", err3)
+		return shim.Error(err.Error())
+	}
+
+	var err4 error
+	err4 = json.Unmarshal([]byte(args[4]), &SourceUserLcToken)
+	if err4 != nil {
+		fmt.Println("Unable to unmarshal data in ShareLicense : ", err4)
+		return shim.Error(err.Error())
+	}
+
+	if SourceUserId != "producer" {
+		UserToUser = true
+	}
+	
     var bytesread []byte
 	bytesread, err = stub.GetState(RootToken)
 	err = json.Unmarshal(bytesread, &destLicense)
@@ -129,12 +158,12 @@ func (l *License) ShareLicense(stub shim.ChaincodeStubInterface, args []string) 
 	}
 
 	for index1, user := range destLicense.User {
-			if user.UserId == UserId {
+			if user.UserId == UserId && user.LcToken == LcToken {
 				dindex = index1
 				//break
 			}
 
-			if user.UserId == SourceUserId {
+			if user.UserId == SourceUserId && user.LcToken == SourceUserLcToken {
 				sindex = index1
 			}
 			// if we get both index then come out of loop
@@ -142,22 +171,15 @@ func (l *License) ShareLicense(stub shim.ChaincodeStubInterface, args []string) 
 			//	break
 			//} 
 	}
+
 	fmt.Printf("chaincode ShareLicese sindex=%v dindex=%v", sindex, dindex)
 	if destLicense.TotalDaysValidity >= destLicense.User[dindex].Validity  {
 		destLicense.LastTransaction = time.Now().String()
 		destLicense.User[dindex].AvailableForShare = true
 		destLicense.User[dindex].Status = "shared"
-	
-		//Generate Token for shared License
-    	tokenString := fmt.Sprintf("%s%s%d%s", destLicense.User[dindex].ProductName, destLicense.User[dindex].CompanyName, destLicense.User[dindex].Validity, time.Now().String())
-		input := strings.NewReader(tokenString)
-		hash := sha256.New()
-		if _, err := io.Copy(hash, input); err != nil {
-			fmt.Println("Unable to Generate Token in GenerateLicense : ", err)
-			return shim.Error(err.Error())
-		}
+		destLicense.User[dindex].IsValidLicense = true
     
-		destLicense.User[dindex].LcToken = hex.EncodeToString(hash.Sum(nil))
+		//destLicense.User[dindex].LcToken = GenerateToken(destLicense.User[dindex].ProductName, destLicense.User[dindex].CompanyName, destLicense.User[dindex].Validity)
     
 		// Sharing is successful, hence reduce the total validity
 		if UserToUser == true {
@@ -222,7 +244,7 @@ func (l *License) RequestLicense(stub shim.ChaincodeStubInterface, args []string
 		return shim.Error(err.Error())
 	}
 
-	objUser.LcToken = "null"
+	objUser.LcToken = GenerateToken(objUser.ProductName, objUser.CompanyName, objUser.Validity)
 	objUser.Status  = "requested"
 	//oldLicEntity.RootLcToken = RootToken
 	oldLicEntity.User  = append(oldLicEntity.User, objUser)
@@ -378,6 +400,8 @@ func (l *License) GenerateLicense(stub shim.ChaincodeStubInterface, args []strin
     
 	licEntity.RootLcToken = hex.EncodeToString(hash.Sum(nil))
 	objUser.AvailableForShare = true
+	objUser.IsValidLicense = true
+	objUser.SourceUserLcToken = "null"
 	objUser.LcToken = "null"
 	objUser.Status  = "generated"
 	objUser.UserId  = "producer"

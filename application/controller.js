@@ -88,6 +88,8 @@ return{
 		var rootToken = JSON.stringify(req.body.rootToken);
 		var UserId = JSON.stringify(req.body.UserId);
 		var SourceUserId = JSON.stringify(req.body.SourceUserId);
+		var LcToken = JSON.stringify(req.body.LcToken);
+		var SourceUserLcToken = JSON.stringify(req.body.SourceUserLcToken);
 		var fabric_client = new Fabric_Client();
 
 		// setup the fabric network
@@ -140,7 +142,7 @@ return{
                 chainId: 'lic-transfer-channel',
 		        txId: tx_id,
 		        fcn: 'ShareLicense',
-		        args: [rootToken, UserId, SourceUserId]
+		        args: [rootToken, UserId, SourceUserId, LcToken, SourceUserLcToken]
 		    };
 		    // send the transaction proposal to the peers
 		    return channel.sendTransactionProposal(request);
