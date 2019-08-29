@@ -10,19 +10,17 @@ Since the tokens are stored in blockchain, the end user can't pirate/mis-use the
 
 # Postman Results
 
-![alt text](https://github.com/saanvijay/LicenseTransfer/blob/master/Images/Screenshot%202019-08-29%20at%207.45.25%20AM.png)
+![alt text](https://github.com/saanvijay/LicenseTransfer/blob/master/Images/Screenshot%202019-08-29%20at%209.55.19%20AM.png)
 
-![alt text](https://github.com/saanvijay/LicenseTransfer/blob/master/Images/Screenshot%202019-08-29%20at%207.45.54%20AM.png)
+![alt text](https://github.com/saanvijay/LicenseTransfer/blob/master/Images/Screenshot%202019-08-29%20at%209.56.11%20AM.png)
 
-![alt text](https://github.com/saanvijay/LicenseTransfer/blob/master/Images/Screenshot%202019-08-29%20at%207.46.50%20AM.png)
+![alt text](https://github.com/saanvijay/LicenseTransfer/blob/master/Images/Screenshot%202019-08-29%20at%209.57.18%20AM.png)
 
-![alt text](https://github.com/saanvijay/LicenseTransfer/blob/master/Images/Screenshot%202019-08-29%20at%207.47.23%20AM.png)
+![alt text](https://github.com/saanvijay/LicenseTransfer/blob/master/Images/Screenshot%202019-08-29%20at%209.57.58%20AM.png)
 
-![alt text](https://github.com/saanvijay/LicenseTransfer/blob/master/Images/Screenshot%202019-08-29%20at%207.48.31%20AM.png)
+![alt text](https://github.com/saanvijay/LicenseTransfer/blob/master/Images/Screenshot%202019-08-29%20at%209.58.54%20AM.png)
 
-![alt text](https://github.com/saanvijay/LicenseTransfer/blob/master/Images/Screenshot%202019-08-29%20at%207.49.08%20AM.png)
-
-![alt text](https://github.com/saanvijay/LicenseTransfer/blob/master/Images/Screenshot%202019-08-29%20at%209.39.17%20AM.png)
+![alt text](https://github.com/saanvijay/LicenseTransfer/blob/master/Images/Screenshot%202019-08-29%20at%209.59.24%20AM.png)
 
 ## License
 
