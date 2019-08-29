@@ -142,7 +142,7 @@ return{
                 chainId: 'lic-transfer-channel',
 		        txId: tx_id,
 		        fcn: 'ShareLicense',
-		        args: [rootToken, UserId, SourceUserId, LcToken, SourceUserLcToken]
+		        args: [rootToken, SourceUserLcToken, LcToken]
 		    };
 		    // send the transaction proposal to the peers
 		    return channel.sendTransactionProposal(request);

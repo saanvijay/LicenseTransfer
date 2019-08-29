@@ -93,11 +93,9 @@ func GenerateToken(ProductName string, CompanyName string, Validity int) string 
 }
 
 func (l *License) ShareLicense(stub shim.ChaincodeStubInterface, args []string) pb.Response { 
-	var err, err1 error
+	var err error
 	var destLicense License
 	var RootToken string
-	var UserId string
-	var SourceUserId string
 	var sindex,dindex int 
 	var UserToUser bool
 	var LcToken, SourceUserLcToken string
@@ -107,48 +105,32 @@ func (l *License) ShareLicense(stub shim.ChaincodeStubInterface, args []string) 
 		return shim.Error(err.Error())
 	}
 
-	err = json.Unmarshal([]byte(args[0]), &RootToken)
-	if err != nil {
-		fmt.Println("Unable to unmarshal data in ShareLicense : ", err)
+	var err0 error
+	err0 = json.Unmarshal([]byte(args[0]), &RootToken)
+	if err0 != nil {
+		fmt.Println("Unable to unmarshal data in ShareLicense : ", err0)
 		return shim.Error(err.Error())
 	}
 
-	err1 = json.Unmarshal([]byte(args[1]), &UserId)
+	var err1 error
+	err1 = json.Unmarshal([]byte(args[1]), &SourceUserLcToken)
 	if err1 != nil {
 		fmt.Println("Unable to unmarshal data in ShareLicense : ", err1)
 		return shim.Error(err.Error())
 	}
 
-	SourceUserId = "producer"
-	sindex = 0
-	dindex = 0
-	UserToUser = false
-
 	var err2 error
-	err2 = json.Unmarshal([]byte(args[2]), &SourceUserId)
+	err2 = json.Unmarshal([]byte(args[2]), &LcToken)
 	if err2 != nil {
 		fmt.Println("Unable to unmarshal data in ShareLicense : ", err2)
 		return shim.Error(err.Error())
 	}
 
-	var err3 error
-	err3 = json.Unmarshal([]byte(args[3]), &LcToken)
-	if err3 != nil {
-		fmt.Println("Unable to unmarshal data in ShareLicense : ", err3)
-		return shim.Error(err.Error())
-	}
+	//SourceUserId = "producer"
+	sindex = 0
+	dindex = 0
+	UserToUser = false
 
-	var err4 error
-	err4 = json.Unmarshal([]byte(args[4]), &SourceUserLcToken)
-	if err4 != nil {
-		fmt.Println("Unable to unmarshal data in ShareLicense : ", err4)
-		return shim.Error(err.Error())
-	}
-
-	if SourceUserId != "producer" {
-		UserToUser = true
-	}
-	
     var bytesread []byte
 	bytesread, err = stub.GetState(RootToken)
 	err = json.Unmarshal(bytesread, &destLicense)
@@ -158,13 +140,16 @@ func (l *License) ShareLicense(stub shim.ChaincodeStubInterface, args []string) 
 	}
 
 	for index1, user := range destLicense.User {
-			if user.UserId == UserId && user.LcToken == LcToken {
+			if user.LcToken == LcToken {
 				dindex = index1
 				//break
 			}
 
-			if user.UserId == SourceUserId && user.LcToken == SourceUserLcToken {
+			if user.LcToken == SourceUserLcToken {
 				sindex = index1
+				if user.SourceUserId != "producer" {
+					UserToUser = true
+				}
 			}
 			// if we get both index then come out of loop
 			//if UserToUser == true && sindex != -1 && dindex != -1 {
@@ -179,7 +164,7 @@ func (l *License) ShareLicense(stub shim.ChaincodeStubInterface, args []string) 
 		destLicense.User[dindex].Status = "shared"
 		destLicense.User[dindex].IsValidLicense = true
     
-		//destLicense.User[dindex].LcToken = GenerateToken(destLicense.User[dindex].ProductName, destLicense.User[dindex].CompanyName, destLicense.User[dindex].Validity)
+		destLicense.User[dindex].LcToken = GenerateToken(destLicense.User[dindex].ProductName, destLicense.User[dindex].CompanyName, destLicense.User[dindex].Validity)
     
 		// Sharing is successful, hence reduce the total validity
 		if UserToUser == true {
@@ -388,21 +373,12 @@ func (l *License) GenerateLicense(stub shim.ChaincodeStubInterface, args []strin
 		fmt.Println("Unable to unmarshal data in GenerateLicense : ", err)
 		return shim.Error(err.Error())
 	}
-
-	// Token Generation
-    tokenString := fmt.Sprintf("%s%s%d%s", objUser.ProductName, objUser.CompanyName, objUser.Validity, time.Now().String())
-	input := strings.NewReader(tokenString)
-	hash := sha256.New()
-	if _, err := io.Copy(hash, input); err != nil {
-		fmt.Println("Unable to Generate Token in GenerateLicense : ", err)
-		return shim.Error(err.Error())
-	}
     
-	licEntity.RootLcToken = hex.EncodeToString(hash.Sum(nil))
+	licEntity.RootLcToken = GenerateToken(objUser.ProductName, objUser.CompanyName, objUser.Validity)
 	objUser.AvailableForShare = true
 	objUser.IsValidLicense = true
 	objUser.SourceUserLcToken = "null"
-	objUser.LcToken = "null"
+	objUser.LcToken = GenerateToken(objUser.ProductName, objUser.CompanyName, objUser.Validity)
 	objUser.Status  = "generated"
 	objUser.UserId  = "producer"
 	licEntity.User  = append(licEntity.User, objUser)
