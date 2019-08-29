@@ -28,6 +28,8 @@ type LcUser struct {
 	SourceUserId          string `json:SourceUserId`
 	SourceUserLcToken     string `json:SourceUserLcToken`
 	IsValidLicense        bool   `json:",string"`
+	ValidityStartsOn      time.Time `json:",string"`
+	ValidityExpiriesOn    time.Time `json:",string"`
 }
 
 type License struct {
@@ -175,6 +177,13 @@ func (l *License) ShareLicense(stub shim.ChaincodeStubInterface, args []string) 
 			destLicense.User[dindex].SourceUserId = "producer"
 		}
 		destLicense.NumberOfUsersShared += 1
+		//Validity/expire date (IST)
+		destLicense.User[dindex].ValidityStartsOn   = time.Now()
+		//destLicense.User[dindex].ValidityStartsOn   = destLicense.User[dindex].ValidityStartsOn.Format("2006-01-02 3:4:5 PM")
+		destLicense.User[dindex].ValidityExpiriesOn = time.Now()
+		destLicense.User[dindex].ValidityExpiriesOn = destLicense.User[dindex].ValidityExpiriesOn.AddDate(0,0,destLicense.User[dindex].Validity)
+		//destLicense.User[dindex].ValidityExpiriesOn = destLicense.User[dindex].ValidityExpiriesOn.Format("2006-01-02 3:4:5 PM")
+
 	} else {
 		destLicense.User[dindex].Status = "rejected"
 	}
@@ -381,6 +390,8 @@ func (l *License) GenerateLicense(stub shim.ChaincodeStubInterface, args []strin
 	objUser.LcToken = GenerateToken(objUser.ProductName, objUser.CompanyName, objUser.Validity)
 	objUser.Status  = "generated"
 	objUser.UserId  = "producer"
+	objUser.ValidityStartsOn = time.Now()
+	objUser.ValidityExpiriesOn = objUser.ValidityStartsOn.AddDate(0,0, objUser.Validity)
 	licEntity.User  = append(licEntity.User, objUser)
 	licEntity.NumberOfUsersShared += 1
 	licEntity.TotalDaysValidity = objUser.Validity

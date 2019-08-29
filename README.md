@@ -22,6 +22,8 @@ Since the tokens are stored in blockchain, the end user can't pirate/mis-use the
 
 ![alt text](https://github.com/saanvijay/LicenseTransfer/blob/master/Images/Screenshot%202019-08-29%20at%207.49.08%20AM.png)
 
+![alt text](https://github.com/saanvijay/LicenseTransfer/blob/master/Images/Screenshot%202019-08-29%20at%209.39.17%20AM.png)
+
 ## License
 
 This sample is licensed under the terms of the [MIT License](http://opensource.org/licenses/MIT). Please see the [LICENSE](LICENSE) file for full details.
