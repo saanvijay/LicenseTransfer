@@ -182,7 +182,7 @@ func (l *License) ShareLicense(stub shim.ChaincodeStubInterface, args []string) 
 		//destLicense.User[dindex].ValidityStartsOn   = destLicense.User[dindex].ValidityStartsOn.Format("2006-01-02 3:4:5 PM")
 		destLicense.User[dindex].ValidityExpiriesOn = time.Now()
 		destLicense.User[dindex].ValidityExpiriesOn = destLicense.User[dindex].ValidityExpiriesOn.AddDate(0,0,destLicense.User[dindex].Validity)
-		//destLicense.User[dindex].ValidityExpiriesOn = destLicense.User[dindex].ValidityExpiriesOn.Format("2006-01-02 3:4:5 PM")
+		destLicense.User[sindex].ValidityExpiriesOn = destLicense.User[sindex].ValidityExpiriesOn.AddDate(0,0, - destLicense.User[dindex].Validity)
 
 	} else {
 		destLicense.User[dindex].Status = "rejected"
