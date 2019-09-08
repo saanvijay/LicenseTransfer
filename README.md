@@ -1,5 +1,10 @@
 # LicenseTransfer
 
+[![Node.js](https://img.shields.io/badge/Node.js-6.3.1-blue.svg)](https://nodejs.org/)
+[![npm](https://img.shields.io/badge/npm-0.0.1-blue.svg)](https://www.npmjs.com/)
+![Platforms](https://img.shields.io/badge/platform-windows%20%7C%20osx%20%7C%20linux-lightgray.svg)
+[![License](http://img.shields.io/:license-mit-blue.svg)](http://opensource.org/licenses/MIT)
+
 Organizations can generate license as token. They can sell their license for particulr software for particular time period. But it should not be limited with particular machine or ipaddress or person.
 
 License transfer (LicenseTransfer) is a token based license model. Any organization or any individul person can buy/sell license token. For example my license token valid for 100 days, but I want to use it only for 50 days then I can sell my license token to others for 50 days. Same way other person can sell/buy license toekn for n days.
