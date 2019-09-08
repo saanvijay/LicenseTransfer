@@ -1,7 +1,7 @@
 #!/bin/bash
 
 export FABRIC_CFG_PATH=/etc/hyperledger/fabric
-echo $FABRIC_CFG_PATH
+
 
 CC_NAME=p2p
 VER=1
@@ -17,6 +17,7 @@ peer chaincode instantiate -o orderer.lictransfer.com:7050  \
                            -n $CC_NAME                      \
                            -c '{"Args": ["Init"]}'          \
                            -v $VER                          \
-			   -l golang                        \
-                           -P "OR ('AppleeMSP.member', 'ibmmMSP.member', 'oracleeMSP.member', 'microsofttMSP.member', 'googleeMSP.member')"
+			               -l golang                        \
+                           -P "OR ('AppleeMSP.member', 'ibmmMSP.member', 'oracleeMSP.member', 'microsofttMSP.member', 'googleeMSP.member')" \
+                           --collections-config  /opt/gopath/src/github.com/chaincode/collections_config.json 
 

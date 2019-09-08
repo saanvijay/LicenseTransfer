@@ -1,0 +1,37 @@
+[
+    {
+    "name": "AppleePrivate",
+    "policy": "OR('Applee.member')",
+    "requiredPeerCount": 0,
+    "maxPeerCount": 3,
+    "blockToLive":10
+    },
+    {
+        "name": "microsofttPrivate",
+        "policy": "OR('microsoftt.member')",
+        "requiredPeerCount": 0,
+        "maxPeerCount": 3,
+        "blockToLive":10
+    },
+    {
+            "name": "oracleePrivate",
+            "policy": "OR('oraclee.member')",
+            "requiredPeerCount": 0,
+            "maxPeerCount": 3,
+            "blockToLive":10
+    },
+    {
+        "name": "googleePrivate",
+        "policy": "OR('googlee.member')",
+        "requiredPeerCount": 0,
+        "maxPeerCount": 3,
+        "blockToLive":10
+    },
+    {
+        "name": "ibmmPrivate",
+        "policy": "OR('ibmm.member')",
+        "requiredPeerCount": 0,
+        "maxPeerCount": 3,
+        "blockToLive":10
+        }
+    ]

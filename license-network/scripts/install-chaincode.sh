@@ -4,7 +4,7 @@ export FABRIC_CFG_PATH=/etc/hyperledger/fabric
 echo $FABRIC_CFG_PATH
 
 CC_NAME=p2p
-VER=6
+VER=1
 CHANNEL_NAME=lic-transfer-channel
 DELAY=5
 COUNTER=1
