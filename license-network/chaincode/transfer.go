@@ -22,7 +22,8 @@ type LcUser struct {
 	UserId                string `json:"UserId"`
 	CompanyName           string `json:"CompanyName"`
 	ProductName           string `json:"ProductName"`
-	Validity              int  `json:",string"`
+	Validity              int    `json:",string"`
+	Price                 float32  `json:",string"`
 	AvailableForShare     bool   `json:",string"`
 	Status                string `json:"Status"`
 	SourceUserId          string `json:SourceUserId`
@@ -37,9 +38,18 @@ type License struct {
 	TotalDaysValidity     int `json:",string"`
 	NumberOfUsersShared   int `json:",string"`
 	LastTransaction       string `json:"LastTransaction"`
-	User                  []LcUser `json:"LUser"`
+	User                  []LcUser `json:"LcUser"`
 }
 
+type LcTokenPrice struct {
+	LcToken		      string `json:"LcToken"`
+	Price 			  float32 `json:",string"`
+}
+type TokenPrice struct {
+	RootLcToken           string `json:"RootLcToken"`
+	TotalPrice            float32 `json:",string"`
+	UserTokenPrice		  []LcTokenPrice `json:"LcTokenPrice"`
+}
 // Init chaincode
 func (l *License) Init(stub shim.ChaincodeStubInterface) pb.Response {
 	fmt.Println("Initiate the chaincode")
@@ -371,6 +381,9 @@ func (l *License) GenerateLicense(stub shim.ChaincodeStubInterface, args []strin
 	var err error
 	var licEntity License
 	var objUser LcUser
+	var objTokenPrice TokenPrice
+	var objUserTokenPrice LcTokenPrice
+	var privateRule string
 
 	if len(args) < 1 {
 		fmt.Println("Invalid number of arguments")
@@ -397,6 +410,38 @@ func (l *License) GenerateLicense(stub shim.ChaincodeStubInterface, args []strin
 	licEntity.TotalDaysValidity = objUser.Validity
 	licEntity.LastTransaction = time.Now().String()
 
+	// Price Information
+	objTokenPrice.RootLcToken = licEntity.RootLcToken
+	objTokenPrice.TotalPrice  = 1000.00 // 1000 USD as of now, make it generic later
+	objUserTokenPrice.LcToken = objUser.LcToken
+	objUserTokenPrice.Price   = 1000.00 // 1000 USD as of now, make it generic later
+	objTokenPrice.UserTokenPrice = append(objTokenPrice.UserTokenPrice, objUserTokenPrice)
+
+	switch objUser.CompanyName {
+	case "Apple":
+		privateRule = "AppleePrivate"
+	case "microsoftt":
+		privateRule = "microsofttPrivate"
+	case "oraclee":
+		privateRule = "oracleePrivate"
+	case "ibmm":
+		privateRule = "ibmmPrivate"
+	case "googlee":
+		privateRule = "googleePrivate"
+	}
+	// Start - Put into Couch DB Price Info
+	JSONBytes, err := json.Marshal(objTokenPrice)
+	if err != nil {
+		fmt.Println("Unable to Marshal GenerateLicense price: ", err)
+		return shim.Error(err.Error())
+	}
+     
+	err = stub.PutPrivateData(privateRule, objTokenPrice.RootLcToken, JSONBytes)
+	// End - Put into Couch DB
+	if err != nil {
+		fmt.Println("Unable to make transaction for GenerateLicense price: ", err)
+		return shim.Error(err.Error())
+	}
 
 	// Start - Put into Couch DB
 	JSONBytes, err := json.Marshal(licEntity)
