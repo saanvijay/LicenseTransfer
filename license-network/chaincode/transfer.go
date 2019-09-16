@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"time"
 	"io"
+	"strconv"
 	"crypto/sha256"
 	"encoding/json"
 	"encoding/hex"
@@ -102,6 +103,43 @@ func GenerateToken(ProductName string, CompanyName string, Validity int) string 
 	}
 
 	return hex.EncodeToString(hash.Sum(nil))
+}
+
+func (l *License) GetLicensePrice(stub shim.ChaincodeStubInterface, args []string) pb.Response { 
+	objTokenPrice := TokenPrice{}
+	licToken := args[0]
+	CompanyName := args[1]
+
+	switch CompanyName {
+	case "Apple":
+		privateRule = "AppleePrivate"
+	case "microsoftt":
+		privateRule = "microsofttPrivate"
+	case "oraclee":
+		privateRule = "oracleePrivate"
+	case "ibmm":
+		privateRule = "ibmmPrivate"
+	case "googlee":
+		privateRule = "googleePrivate"
+	}
+
+	LicensePriceBytes, err := stub.GetprivateData(privateRule,licToken)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	error2 := json.Unmarshal(LicensePriceBytes, &TokenPrice)
+	if error2 != nil {
+		fmt.Println("Unable to unmarshal the licensePriceData Token " + licToken)
+		return shim.Error(error2.Error())
+	}
+
+	JsonLicensePriceBytes, error3 := json.Marshal(TokenPrice)
+	if error3 != nil {
+		return shim.Error(error3.Error())
+	}
+
+	return shim.Success(JsonLicensePriceBytes)
 }
 
 func (l *License) ShareLicense(stub shim.ChaincodeStubInterface, args []string) pb.Response { 
@@ -390,6 +428,12 @@ func (l *License) GenerateLicense(stub shim.ChaincodeStubInterface, args []strin
 		return shim.Error(err.Error())
 	}
 
+	ObjToeknPrice, err5 := strconv.ParseFloat(args[1], 32)
+	if err5 != nil {
+		fmt.Println("Unable to parse price data in GenerateLicense : ", err5)
+		return shim.Error(err5.Error())
+	}	
+
 	err = json.Unmarshal([]byte(args[0]), &objUser)
 	if err != nil {
 		fmt.Println("Unable to unmarshal data in GenerateLicense : ", err)
@@ -412,9 +456,9 @@ func (l *License) GenerateLicense(stub shim.ChaincodeStubInterface, args []strin
 
 	// Price Information
 	objTokenPrice.RootLcToken = licEntity.RootLcToken
-	objTokenPrice.TotalPrice  = 1000.00 // 1000 USD as of now, make it generic later
+	objTokenPrice.TotalPrice  = ObjToeknPrice // USD as of now, make it generic later
 	objUserTokenPrice.LcToken = objUser.LcToken
-	objUserTokenPrice.Price   = 1000.00 // 1000 USD as of now, make it generic later
+	objUserTokenPrice.Price   = ObjToeknPrice// USD as of now, make it generic later
 	objTokenPrice.UserTokenPrice = append(objTokenPrice.UserTokenPrice, objUserTokenPrice)
 
 	switch objUser.CompanyName {
