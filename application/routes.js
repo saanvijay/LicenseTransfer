@@ -14,4 +14,7 @@ module.exports = function(application){
   application.get('/GetAllLicenses', function(req, res){
     lc.GetAllLicenses(req, res);
   });
+  application.get('/GetLicensePrice', function(req, res){
+    lc.GetLicensePrice(req, res);
+  });
 }

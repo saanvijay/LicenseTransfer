@@ -1,37 +1,41 @@
-[
-    {
+[{
     "name": "AppleePrivate",
-    "policy": "OR('Applee.member')",
+    "policy": "OR('AppleeMSP.member')",
     "requiredPeerCount": 0,
     "maxPeerCount": 3,
-    "blockToLive":10
-    },
-    {
-        "name": "microsofttPrivate",
-        "policy": "OR('microsoftt.member')",
-        "requiredPeerCount": 0,
-        "maxPeerCount": 3,
-        "blockToLive":10
-    },
-    {
-            "name": "oracleePrivate",
-            "policy": "OR('oraclee.member')",
-            "requiredPeerCount": 0,
-            "maxPeerCount": 3,
-            "blockToLive":10
-    },
-    {
-        "name": "googleePrivate",
-        "policy": "OR('googlee.member')",
-        "requiredPeerCount": 0,
-        "maxPeerCount": 3,
-        "blockToLive":10
-    },
-    {
-        "name": "ibmmPrivate",
-        "policy": "OR('ibmm.member')",
-        "requiredPeerCount": 0,
-        "maxPeerCount": 3,
-        "blockToLive":10
-        }
-    ]
+    "blockToLive":3,
+    "memberOnlyRead": true
+},
+{
+    "name": "microsofttPrivate",
+    "policy": "OR('microsofttMSP.member')",
+    "requiredPeerCount": 0,
+    "maxPeerCount": 3,
+    "blockToLive":3,
+    "memberOnlyRead": true
+},
+{
+    "name": "ibmmPrivate",
+    "policy": "OR('ibmmMSP.member')",
+    "requiredPeerCount": 0,
+    "maxPeerCount": 3,
+    "blockToLive":3,
+    "memberOnlyRead": true
+},
+{
+    "name": "googleePrivate",
+    "policy": "OR('googleeMSP.member')",
+    "requiredPeerCount": 0,
+    "maxPeerCount": 3,
+    "blockToLive":3,
+    "memberOnlyRead": true
+},
+{
+    "name": "oracleePrivate",
+    "policy": "OR('oracleeMSP.member')",
+    "requiredPeerCount": 0,
+    "maxPeerCount": 3,
+    "blockToLive":3,
+    "memberOnlyRead": true
+}
+]

@@ -85,6 +85,20 @@ func (l *License) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	if function == "GetTransactionHistoryForKey" {
 		return l.GetTransactionHistoryForKey(stub, args)
 	}
+	if function == "GetLicensePrice" {
+		transient, err := stub.GetTransient()
+		if err != nil {
+			return shim.Error(err.Error())
+		}
+		return l.GetLicensePrice(stub, transient)
+	}
+	if function == "SetLicensePrice" {
+		transient, err := stub.GetTransient()
+		if err != nil {
+			return shim.Error(err.Error())
+		}
+		return l.SetLicensePrice(stub, transient)
+	}
 
 	fmt.Println("Function not found!")
 	return shim.Error("Recieved unknown function invocation!")
@@ -105,41 +119,49 @@ func GenerateToken(ProductName string, CompanyName string, Validity int) string 
 	return hex.EncodeToString(hash.Sum(nil))
 }
 
-func (l *License) GetLicensePrice(stub shim.ChaincodeStubInterface, args []string) pb.Response { 
-	objTokenPrice := TokenPrice{}
-	licToken := args[0]
-	CompanyName := args[1]
+func (l *License) SetLicensePrice(stub shim.ChaincodeStubInterface, transient map[string][]byte) pb.Response { 
+	objTokenPrice := LcTokenPrice{}
+	
 
-	switch CompanyName {
-	case "Apple":
-		privateRule = "AppleePrivate"
-	case "microsoftt":
-		privateRule = "microsofttPrivate"
-	case "oraclee":
-		privateRule = "oracleePrivate"
-	case "ibmm":
-		privateRule = "ibmmPrivate"
-	case "googlee":
-		privateRule = "googleePrivate"
+	col_name := string(transient["collection"])
+	key_name := string(transient["lcToken"])
+	license_price := string(transient["price"])
+
+	value, err2 := strconv.ParseFloat(license_price, 32)
+	if err2 != nil {
+		fmt.Println("Unable to parse float data from string", err2)
+		return shim.Error(err2.Error())
 	}
+	objTokenPrice.LcToken = key_name
+	objTokenPrice.Price = float32(value)
 
-	LicensePriceBytes, err := stub.GetprivateData(privateRule,licToken)
+	JSONBytes, err := json.Marshal(objTokenPrice)
 	if err != nil {
+		fmt.Println("Unable to Marshal SetLicensePrice: ", err)
 		return shim.Error(err.Error())
 	}
 
-	error2 := json.Unmarshal(LicensePriceBytes, &TokenPrice)
-	if error2 != nil {
-		fmt.Println("Unable to unmarshal the licensePriceData Token " + licToken)
-		return shim.Error(error2.Error())
+	err1 := stub.PutPrivateData(col_name, key_name, JSONBytes)
+	if err1 != nil {
+		fmt.Println("PutPrivateData Fails " + key_name)
+		return shim.Error(err1.Error())
 	}
 
-	JsonLicensePriceBytes, error3 := json.Marshal(TokenPrice)
-	if error3 != nil {
-		return shim.Error(error3.Error())
+	return shim.Success(nil)
+}
+
+func (l *License) GetLicensePrice(stub shim.ChaincodeStubInterface, transient map[string][]byte) pb.Response { 
+	
+	col_name := string(transient["collection"])
+	key_name := string(transient["lcToken"])
+
+	LicensePriceBytes, err := stub.GetPrivateData(col_name,key_name)
+	if err != nil {
+		fmt.Println("GetPrivateData Fails " + key_name)
+		return shim.Error(err.Error())
 	}
 
-	return shim.Success(JsonLicensePriceBytes)
+	return shim.Success(LicensePriceBytes)
 }
 
 func (l *License) ShareLicense(stub shim.ChaincodeStubInterface, args []string) pb.Response { 
@@ -419,20 +441,11 @@ func (l *License) GenerateLicense(stub shim.ChaincodeStubInterface, args []strin
 	var err error
 	var licEntity License
 	var objUser LcUser
-	var objTokenPrice TokenPrice
-	var objUserTokenPrice LcTokenPrice
-	var privateRule string
 
 	if len(args) < 1 {
 		fmt.Println("Invalid number of arguments")
 		return shim.Error(err.Error())
 	}
-
-	ObjToeknPrice, err5 := strconv.ParseFloat(args[1], 32)
-	if err5 != nil {
-		fmt.Println("Unable to parse price data in GenerateLicense : ", err5)
-		return shim.Error(err5.Error())
-	}	
 
 	err = json.Unmarshal([]byte(args[0]), &objUser)
 	if err != nil {
@@ -454,47 +467,14 @@ func (l *License) GenerateLicense(stub shim.ChaincodeStubInterface, args []strin
 	licEntity.TotalDaysValidity = objUser.Validity
 	licEntity.LastTransaction = time.Now().String()
 
-	// Price Information
-	objTokenPrice.RootLcToken = licEntity.RootLcToken
-	objTokenPrice.TotalPrice  = ObjToeknPrice // USD as of now, make it generic later
-	objUserTokenPrice.LcToken = objUser.LcToken
-	objUserTokenPrice.Price   = ObjToeknPrice// USD as of now, make it generic later
-	objTokenPrice.UserTokenPrice = append(objTokenPrice.UserTokenPrice, objUserTokenPrice)
-
-	switch objUser.CompanyName {
-	case "Apple":
-		privateRule = "AppleePrivate"
-	case "microsoftt":
-		privateRule = "microsofttPrivate"
-	case "oraclee":
-		privateRule = "oracleePrivate"
-	case "ibmm":
-		privateRule = "ibmmPrivate"
-	case "googlee":
-		privateRule = "googleePrivate"
-	}
-	// Start - Put into Couch DB Price Info
-	JSONBytes, err := json.Marshal(objTokenPrice)
-	if err != nil {
-		fmt.Println("Unable to Marshal GenerateLicense price: ", err)
-		return shim.Error(err.Error())
-	}
-     
-	err = stub.PutPrivateData(privateRule, objTokenPrice.RootLcToken, JSONBytes)
-	// End - Put into Couch DB
-	if err != nil {
-		fmt.Println("Unable to make transaction for GenerateLicense price: ", err)
-		return shim.Error(err.Error())
-	}
-
 	// Start - Put into Couch DB
-	JSONBytes, err := json.Marshal(licEntity)
-	if err != nil {
-		fmt.Println("Unable to Marshal GenerateLicense: ", err)
-		return shim.Error(err.Error())
+	JSONBytes1, err6 := json.Marshal(licEntity)
+	if err6 != nil {
+		fmt.Println("Unable to Marshal GenerateLicense: ", err6)
+		return shim.Error(err6.Error())
 	}
      
-	err = stub.PutState(licEntity.RootLcToken, JSONBytes)
+	err = stub.PutState(licEntity.RootLcToken, JSONBytes1)
 	// End - Put into Couch DB
 	if err != nil {
 		fmt.Println("Unable to make transaction for GenerateLicense: ", err)
