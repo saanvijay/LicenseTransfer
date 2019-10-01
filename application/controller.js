@@ -144,7 +144,7 @@ return{
 					break;
 			}
 
-			var tmap = new Map();
+			let tmap = new Map();
 			tmap.set("lcToken", lcToken);
 			tmap.set("collection", privateRule);
 
@@ -352,7 +352,8 @@ return{
 
 		var LcToken = req.body.lcToken;
 		var Price = req.body.Price;
-		var CompanyName = req.body.companyName;
+		var CompanyName = req.body.CompanyName;
+		var privateRule;
 
 		var fabric_client = new Fabric_Client();
 
@@ -400,6 +401,7 @@ return{
 		    tx_id = fabric_client.newTransactionID();
 		    console.log("assigning transaction_id: ", tx_id._transaction_id);
 
+			console.log("Company Name ", CompanyName);
 
 			switch (CompanyName) {
 				case "Applee":
@@ -417,24 +419,28 @@ return{
 				case "googlee":
 					privateRule = "googleePrivate";
 					break;
+				default:
+					privateRule = "no private rule";
 			}
 
-			var tmap = new Map();
+			console.log("collection name ", privateRule);
+
+			/*let tmap = new Map();
 			tmap.set("lcToken", lcToken);
 			tmap.set("collection", privateRule);
 			tmap.set("Price", Price);
+			*/
+			console.log("collection name 1", privateRule);
 
-		console.log("collection name ", privateRule);
-		console.log("Company Name ", CompanyName);
+		
 		// Get all Overall planning
 		    const request = {
 		        chaincodeId: 'p2p',
                 channel_id: 'lic-transfer-channel',
 		        txId: tx_id,
 		        fcn: 'SetLicensePrice',
-				args: [lcToken],
-				transientMap: tmap,
-				'collections-config': collectionsConfigPath
+				args: [lcToken, privateRule, Price],
+				transientMap: {'lcToken': lcToken, 'collection': privateRule, 'price': Price}
 			};
 			
 		    // send the transaction proposal to the peers
