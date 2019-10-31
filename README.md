@@ -1,7 +1,7 @@
 # LicenseTransfer
 [![Node.js](https://img.shields.io/badge/Node.js-8.9.4-blue.svg)](https://nodejs.org/)
 [![npm](https://img.shields.io/badge/npm-5.6.0-blue.svg)](https://www.npmjs.com/)
-![Platforms](https://img.shields.io/badge/platform-windows%20%7C%20osx%20%7C%20linux-lightgray.svg)
+![Platforms](https://img.shields.io/badge/platform-osx%20%7C%20linux-lightgray.svg)
 [![License](http://img.shields.io/:license-mit-blue.svg)](http://opensource.org/licenses/MIT)
 
 Organizations can generate license as token. They can sell their license for particulr software for particular time period. But it should not be limited with particular machine or ipaddress or person.
